@@ -1,0 +1,41 @@
+package fr.rader.bob.nbt;
+
+import fr.rader.bob.DataReader;
+
+import java.util.Arrays;
+
+public class NBTTagLongArray extends NBTBase {
+
+    private long[] value;
+
+    public NBTTagLongArray(byte[] rawData, boolean fromList) {
+        DataReader reader = new DataReader(rawData);
+
+        if(!fromList) {
+            setId(reader.readByte());
+            setName(reader.readString(reader.readShort()));
+        }
+
+        readData(reader);
+    }
+
+    private void readData(DataReader reader) {
+        int len = reader.readInt();
+        value = new long[len];
+
+        for(int i = 0; i < len; i++) {
+            value[i] = reader.readLong();
+        }
+
+        setLength(reader.getOffset());
+    }
+
+    public long[] getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return "LongArray(\"" + getName() + "\"): " + Arrays.toString(getValue());
+    }
+}
