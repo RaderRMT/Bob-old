@@ -1,9 +1,9 @@
 package fr.rader.bob.nbt;
 
 import fr.rader.bob.DataReader;
+import fr.rader.bob.DataWriter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class NBTTagCompound extends NBTBase {
@@ -23,7 +23,7 @@ public class NBTTagCompound extends NBTBase {
 
     private void readData(DataReader reader) {
         while(true) {
-            NBTBase tag = null;
+            NBTBase tag;
 
             int tagID = reader.readByte();
             if(tagID == 0x00) {
@@ -71,6 +71,8 @@ public class NBTTagCompound extends NBTBase {
                 case 12:
                     tag = new NBTTagLongArray(reader.getFromOffset(false), false);
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected tag: " + Integer.toHexString(tagID));
             }
 
             value.add(tag);
@@ -84,7 +86,21 @@ public class NBTTagCompound extends NBTBase {
     }
 
     @Override
-    public String toString() {
-        return "Compound(\"" + getName() + "\"): " + Arrays.toString(new List[] { getValue() } );
+    public byte[] toByteArray(boolean fromList) {
+        DataWriter writer = new DataWriter();
+
+        if(!fromList) {
+            writer.writeByte(0x0a);
+            writer.writeShort(getName().length());
+            writer.writeString(getName());
+        }
+
+        for(NBTBase base : value) {
+            writer.writeByteArray(base.toByteArray(false));
+        }
+
+        writer.writeByte(0);
+
+        return writer.getData();
     }
 }

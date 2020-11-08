@@ -1,12 +1,14 @@
 package fr.rader.bob.nbt;
 
 import fr.rader.bob.DataReader;
-
-import java.util.Arrays;
+import fr.rader.bob.DataWriter;
 
 public class NBTTagList extends NBTBase {
 
     private NBTBase[] value;
+
+    private int tagID;
+    private int length;
 
     public NBTTagList(byte[] rawData, boolean fromList) {
         DataReader reader = new DataReader(rawData);
@@ -20,13 +22,13 @@ public class NBTTagList extends NBTBase {
     }
 
     private void readData(DataReader reader) {
-        int tagID = reader.readByte();
-        int length = reader.readInt();
+        tagID = reader.readByte();
+        length = reader.readInt();
 
         value = new NBTBase[length];
 
         for(int i = 0; i < length; i++) {
-            NBTBase tag = null;
+            NBTBase tag;
 
             switch(tagID) {
                 case 1:
@@ -65,6 +67,8 @@ public class NBTTagList extends NBTBase {
                 case 12:
                     tag = new NBTTagLongArray(reader.getFromOffset(false), true);
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected tag: " + Integer.toHexString(tagID));
             }
 
             value[i] = tag;
@@ -79,7 +83,22 @@ public class NBTTagList extends NBTBase {
     }
 
     @Override
-    public String toString() {
-        return "List(\"" + getName() + "\"): " + Arrays.toString(getValue());
+    public byte[] toByteArray(boolean fromList) {
+        DataWriter writer = new DataWriter();
+
+        if(!fromList) {
+            writer.writeByte(0x09);
+            writer.writeShort(getName().length());
+            writer.writeString(getName());
+        }
+
+        writer.writeByte(this.tagID);
+        writer.writeInt(this.length);
+
+        for(NBTBase base : this.value) {
+            writer.writeByteArray(base.toByteArray(true));
+        }
+
+        return writer.getData();
     }
 }

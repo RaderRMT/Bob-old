@@ -1,6 +1,7 @@
 package fr.rader.bob.nbt;
 
 import fr.rader.bob.DataReader;
+import fr.rader.bob.DataWriter;
 
 public class NBTTagByte extends NBTBase {
 
@@ -28,7 +29,17 @@ public class NBTTagByte extends NBTBase {
     }
 
     @Override
-    public String toString() {
-        return "Byte(\"" + getName() + "\"): " + getValue();
+    public byte[] toByteArray(boolean fromList) {
+        DataWriter writer = new DataWriter();
+
+        if(!fromList) {
+            writer.writeByte(0x01);
+            writer.writeShort(getName().length());
+            writer.writeString(getName());
+        }
+
+        writer.writeByte(value);
+
+        return writer.getData();
     }
 }

@@ -3,11 +3,11 @@ package fr.rader.bob;
 public class UUID {
 
     private byte[] rawUUID;
-    private int uuidVer;
+    private int uuidVersion;
 
     public UUID(byte[] uuid) {
         rawUUID = uuid;
-        uuidVer = (uuid[4] & 0x30) >> 4;
+        uuidVersion = (uuid[4] & 0x30) >> 4;
     }
 
     public byte[] getRawUUID() {
@@ -18,11 +18,11 @@ public class UUID {
         this.rawUUID = rawUUID;
     }
 
-    public int getUuidVer() {
-        return uuidVer;
+    public int getUUIDVersion() {
+        return uuidVersion;
     }
 
-    public void setUuidVer(int uuidVer) {
-        this.uuidVer = uuidVer;
+    public void setUUIDVersion(int uuidVersion) {
+        this.uuidVersion = uuidVersion;
     }
 }

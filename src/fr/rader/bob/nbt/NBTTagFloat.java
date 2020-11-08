@@ -1,6 +1,7 @@
 package fr.rader.bob.nbt;
 
 import fr.rader.bob.DataReader;
+import fr.rader.bob.DataWriter;
 
 public class NBTTagFloat extends NBTBase {
 
@@ -28,7 +29,17 @@ public class NBTTagFloat extends NBTBase {
     }
 
     @Override
-    public String toString() {
-        return "Float(\"" + getName() + "\"): " + getValue();
+    public byte[] toByteArray(boolean fromList) {
+        DataWriter writer = new DataWriter();
+
+        if(!fromList) {
+            writer.writeByte(0x05);
+            writer.writeShort(getName().length());
+            writer.writeString(getName());
+        }
+
+        writer.writeFloat(value);
+
+        return writer.getData();
     }
 }

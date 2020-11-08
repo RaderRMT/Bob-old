@@ -1,5 +1,9 @@
 package fr.rader.bob;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import fr.rader.bob.nbt.NBTTagCompound;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -10,6 +14,11 @@ public class DataReader {
 
     public DataReader(byte[] data) {
         this.data = data;
+    }
+
+    public DataReader(byte[] data, int startAt) {
+        this.data = data;
+        this.offset = startAt;
     }
 
     public void startAt(int startByte) {
@@ -30,7 +39,7 @@ public class DataReader {
 
     // 4 bytes
     public int readInt() {
-        return readByte() << 24 | readByte() << 16 | readByte() << 8 | readByte();
+        return readShort() << 16 | readShort();
     }
 
     // 8 bytes
@@ -100,11 +109,6 @@ public class DataReader {
         return out;
     }
 
-    /**
-     * Return data that was not read previously
-     * @param incrementOffset increment the offset
-     * @return byte array of unread data
-     */
     public byte[] getFromOffset(boolean incrementOffset) {
         byte[] out = new byte[data.length - offset];
 
@@ -115,6 +119,29 @@ public class DataReader {
         if(incrementOffset) offset += out.length;
 
         return out;
+    }
+
+    public Position readPosition() {
+        long rawPos = readLong();
+        return new Position((int) (rawPos >>> 38), (int) (rawPos & 0xFFF), (int) (rawPos << 26 >>> 38));
+    }
+
+    public NBTTagCompound readNBT() {
+        NBTTagCompound out = new NBTTagCompound(getFromOffset(false), false);
+        addOffset(out.getLength());
+        return out;
+    }
+
+    public String readChat() {
+        return new Gson().fromJson(readString(readVarInt()), JsonObject.class).toString();
+    }
+
+    public Slot readSlot() {
+        if(readBoolean()) {
+            return new Slot(true, readVarInt(), readByte(), readNBT());
+        }
+
+        return new Slot(false);
     }
 
     public int getOffset() {
@@ -131,5 +158,23 @@ public class DataReader {
 
     public UUID readUUID() {
         return new UUID(readFollowingBytes(16));
+    }
+
+    public int getDataLength() {
+        return this.data.length;
+    }
+
+    public String readIdentifier() {
+        return readString(readByte());
+    }
+
+    public int[] readVarIntArray(int biomesLength) {
+        int[] out = new int[biomesLength];
+
+        for(int i = 0; i < biomesLength; i++) {
+            out[i] = readVarInt();
+        }
+
+        return out;
     }
 }

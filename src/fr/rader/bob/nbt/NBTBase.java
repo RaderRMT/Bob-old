@@ -29,4 +29,8 @@ public class NBTBase {
     public void setName(String name) {
         this.name = name;
     }
+
+    public byte[] toByteArray(boolean fromList) {
+        return null;
+    }
 }

@@ -1,8 +1,7 @@
 package fr.rader.bob.nbt;
 
 import fr.rader.bob.DataReader;
-
-import java.util.Arrays;
+import fr.rader.bob.DataWriter;
 
 public class NBTTagByteArray extends NBTBase {
 
@@ -30,7 +29,18 @@ public class NBTTagByteArray extends NBTBase {
     }
 
     @Override
-    public String toString() {
-        return "ByteArray(\"" + getName() + "\"): " + Arrays.toString(getValue());
+    public byte[] toByteArray(boolean fromList) {
+        DataWriter writer = new DataWriter();
+
+        if(!fromList) {
+            writer.writeByte(0x07);
+            writer.writeShort(getName().length());
+            writer.writeString(getName());
+        }
+
+        writer.writeInt(value.length);
+        writer.writeByteArray(value);
+
+        return writer.getData();
     }
 }
