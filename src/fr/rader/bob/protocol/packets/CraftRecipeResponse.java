@@ -2,20 +2,18 @@ package fr.rader.bob.protocol.packets;
 
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
-import fr.rader.bob.types.Slot;
 import fr.rader.bob.protocol.Packet;
 
-public class WindowItems implements Packet {
+public class CraftRecipeResponse implements Packet {
 
     private byte packetID;
     private int timestamp;
     private int size;
 
     private int windowID;
-    private int count;
-    private Slot[] slotData;
+    private String recipe;
 
-    public WindowItems(byte id, int timestamp, int size, byte[] rawData) {
+    public CraftRecipeResponse(byte id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -23,12 +21,7 @@ public class WindowItems implements Packet {
         DataReader reader = new DataReader(rawData);
 
         windowID = reader.readByte();
-        count = reader.readShort();
-
-        slotData = new Slot[count];
-        for(int i = 0; i < count; i++) {
-            slotData[i] = reader.readSlot();
-        }
+        recipe = reader.readIdentifier();
     }
 
     @Override
@@ -40,11 +33,7 @@ public class WindowItems implements Packet {
         writer.writeInt(packetID);
 
         writer.writeByte(windowID);
-        writer.writeShort(count);
-
-        for(Slot slot : slotData) {
-            writer.writeSlot(slot);
-        }
+        writer.writeIdentifier(recipe);
 
         return writer.getData();
     }
@@ -72,19 +61,11 @@ public class WindowItems implements Packet {
         this.windowID = windowID;
     }
 
-    public int getCount() {
-        return count;
+    public String getRecipe() {
+        return recipe;
     }
 
-    public void setCount(int count) {
-        this.count = count;
-    }
-
-    public Slot[] getSlotData() {
-        return slotData;
-    }
-
-    public void setSlotData(Slot[] slotData) {
-        this.slotData = slotData;
+    public void setRecipe(String recipe) {
+        this.recipe = recipe;
     }
 }

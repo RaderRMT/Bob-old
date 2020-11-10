@@ -2,7 +2,7 @@ package fr.rader.bob.protocol.packets;
 
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
-import fr.rader.bob.UUID;
+import fr.rader.bob.types.UUID;
 import fr.rader.bob.protocol.Packet;
 
 public class SpawnLivingEntity implements Packet {
@@ -17,8 +17,8 @@ public class SpawnLivingEntity implements Packet {
     private double x;
     private double y;
     private double z;
-    private int pitch;
     private int yaw;
+    private int pitch;
     private int headPitch;
     private int velX;
     private int velY;
@@ -37,8 +37,8 @@ public class SpawnLivingEntity implements Packet {
         x = reader.readDouble();
         y = reader.readDouble();
         z = reader.readDouble();
-        pitch = reader.readByte();
         yaw = reader.readByte();
+        pitch = reader.readByte();
         headPitch = reader.readByte();
         velX = reader.readShort();
         velY = reader.readShort();
@@ -59,8 +59,8 @@ public class SpawnLivingEntity implements Packet {
         writer.writeDouble(x);
         writer.writeDouble(y);
         writer.writeDouble(z);
-        writer.writeByte(pitch);
         writer.writeByte(yaw);
+        writer.writeByte(pitch);
         writer.writeByte(headPitch);
         writer.writeShort(velX);
         writer.writeShort(velY);

@@ -2,20 +2,21 @@ package fr.rader.bob.protocol.packets;
 
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
-import fr.rader.bob.types.Position;
 import fr.rader.bob.protocol.Packet;
 
-public class BlockBreakAnimation implements Packet {
+public class EntityPosition implements Packet {
 
     private byte packetID;
     private int timestamp;
     private int size;
 
     private int entityID;
-    private Position location;
-    private int destroyStage;
+    private int deltaX;
+    private int deltaY;
+    private int deltaZ;
+    private boolean onGround;
 
-    public BlockBreakAnimation(byte id, int timestamp, int size, byte[] rawData) {
+    public EntityPosition(byte id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -23,8 +24,10 @@ public class BlockBreakAnimation implements Packet {
         DataReader reader = new DataReader(rawData);
 
         entityID = reader.readVarInt();
-        location = reader.readPosition();
-        destroyStage = reader.readByte();
+        deltaX = reader.readShort();
+        deltaY = reader.readShort();
+        deltaZ = reader.readShort();
+        onGround = reader.readBoolean();
     }
 
     @Override
@@ -36,8 +39,10 @@ public class BlockBreakAnimation implements Packet {
         writer.writeInt(packetID);
 
         writer.writeVarInt(entityID);
-        writer.writePosition(location);
-        writer.writeByte(destroyStage);
+        writer.writeShort(deltaX);
+        writer.writeShort(deltaY);
+        writer.writeShort(deltaZ);
+        writer.writeBoolean(onGround);
 
         return writer.getData();
     }
@@ -65,19 +70,35 @@ public class BlockBreakAnimation implements Packet {
         this.entityID = entityID;
     }
 
-    public Position getLocation() {
-        return location;
+    public int getDeltaX() {
+        return deltaX;
     }
 
-    public void setLocation(Position location) {
-        this.location = location;
+    public void setDeltaX(int deltaX) {
+        this.deltaX = deltaX;
     }
 
-    public int getDestroyStage() {
-        return destroyStage;
+    public int getDeltaY() {
+        return deltaY;
     }
 
-    public void setDestroyStage(int destroyStage) {
-        this.destroyStage = destroyStage;
+    public void setDeltaY(int deltaY) {
+        this.deltaY = deltaY;
+    }
+
+    public int getDeltaZ() {
+        return deltaZ;
+    }
+
+    public void setDeltaZ(int deltaZ) {
+        this.deltaZ = deltaZ;
+    }
+
+    public boolean isOnGround() {
+        return onGround;
+    }
+
+    public void setOnGround(boolean onGround) {
+        this.onGround = onGround;
     }
 }

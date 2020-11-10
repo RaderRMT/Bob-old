@@ -2,24 +2,23 @@ package fr.rader.bob.protocol.packets;
 
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
-import fr.rader.bob.types.UUID;
 import fr.rader.bob.protocol.Packet;
 
-public class SpawnPlayer implements Packet {
+public class EntityPositionRotation implements Packet {
 
     private byte packetID;
     private int timestamp;
     private int size;
 
     private int entityID;
-    private UUID playerUUID;
-    private double x;
-    private double y;
-    private double z;
-    private int yaw;
+    private int deltaX;
+    private int deltaY;
+    private int deltaZ;
     private int pitch;
+    private int yaw;
+    private boolean onGround;
 
-    public SpawnPlayer(byte id, int timestamp, int size, byte[] rawData) {
+    public EntityPositionRotation(byte id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -27,12 +26,12 @@ public class SpawnPlayer implements Packet {
         DataReader reader = new DataReader(rawData);
 
         entityID = reader.readVarInt();
-        playerUUID = reader.readUUID();
-        x = reader.readDouble();
-        y = reader.readDouble();
-        z = reader.readDouble();
+        deltaX = reader.readShort();
+        deltaY = reader.readShort();
+        deltaZ = reader.readShort();
         yaw = reader.readByte();
         pitch = reader.readByte();
+        onGround = reader.readBoolean();
     }
 
     @Override
@@ -44,12 +43,12 @@ public class SpawnPlayer implements Packet {
         writer.writeInt(packetID);
 
         writer.writeVarInt(entityID);
-        writer.writeUUID(playerUUID);
-        writer.writeDouble(x);
-        writer.writeDouble(y);
-        writer.writeDouble(z);
+        writer.writeShort(deltaX);
+        writer.writeShort(deltaY);
+        writer.writeShort(deltaZ);
         writer.writeByte(yaw);
         writer.writeByte(pitch);
+        writer.writeBoolean(onGround);
 
         return writer.getData();
     }
@@ -77,36 +76,28 @@ public class SpawnPlayer implements Packet {
         this.entityID = entityID;
     }
 
-    public UUID getPlayerUUID() {
-        return playerUUID;
+    public int getDeltaX() {
+        return deltaX;
     }
 
-    public void setPlayerUUID(UUID playerUUID) {
-        this.playerUUID = playerUUID;
+    public void setDeltaX(int deltaX) {
+        this.deltaX = deltaX;
     }
 
-    public double getX() {
-        return x;
+    public int getDeltaY() {
+        return deltaY;
     }
 
-    public void setX(double x) {
-        this.x = x;
+    public void setDeltaY(int deltaY) {
+        this.deltaY = deltaY;
     }
 
-    public double getY() {
-        return y;
+    public int getDeltaZ() {
+        return deltaZ;
     }
 
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public double getZ() {
-        return z;
-    }
-
-    public void setZ(double z) {
-        this.z = z;
+    public void setDeltaZ(int deltaZ) {
+        this.deltaZ = deltaZ;
     }
 
     public int getPitch() {
@@ -123,5 +114,13 @@ public class SpawnPlayer implements Packet {
 
     public void setYaw(int yaw) {
         this.yaw = yaw;
+    }
+
+    public boolean isOnGround() {
+        return onGround;
+    }
+
+    public void setOnGround(boolean onGround) {
+        this.onGround = onGround;
     }
 }

@@ -2,29 +2,28 @@ package fr.rader.bob.protocol.packets;
 
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
-import fr.rader.bob.types.UUID;
 import fr.rader.bob.protocol.Packet;
 
-public class ChatMessage implements Packet {
+public class PlayerAbilities implements Packet {
 
     private byte packetID;
     private int timestamp;
     private int size;
 
-    private String jsonData;
-    private int position;
-    private UUID sender;
+    private int flags;
+    private float flyingSpeed;
+    private float fovModifier;
 
-    public ChatMessage(byte id, int timestamp, int size, byte[] rawData) {
+    public PlayerAbilities(byte id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
 
         DataReader reader = new DataReader(rawData);
 
-        jsonData = reader.readChat();
-        position = reader.readByte();
-        sender = reader.readUUID();
+        flags = reader.readByte();
+        flyingSpeed = reader.readFloat();
+        fovModifier = reader.readFloat();
     }
 
     @Override
@@ -35,9 +34,9 @@ public class ChatMessage implements Packet {
         writer.writeInt(size);
         writer.writeInt(packetID);
 
-        writer.writeChat(jsonData);
-        writer.writeByte(position);
-        writer.writeUUID(sender);
+        writer.writeByte(flags);
+        writer.writeFloat(flyingSpeed);
+        writer.writeFloat(fovModifier);
 
         return writer.getData();
     }
@@ -57,27 +56,27 @@ public class ChatMessage implements Packet {
         return timestamp;
     }
 
-    public String getJsonData() {
-        return jsonData;
+    public int getFlags() {
+        return flags;
     }
 
-    public void setJsonData(String jsonData) {
-        this.jsonData = jsonData;
+    public void setFlags(int flags) {
+        this.flags = flags;
     }
 
-    public int getPosition() {
-        return position;
+    public float getFlyingSpeed() {
+        return flyingSpeed;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
+    public void setFlyingSpeed(float flyingSpeed) {
+        this.flyingSpeed = flyingSpeed;
     }
 
-    public UUID getSender() {
-        return sender;
+    public float getFovModifier() {
+        return fovModifier;
     }
 
-    public void setSender(UUID sender) {
-        this.sender = sender;
+    public void setFovModifier(float fovModifier) {
+        this.fovModifier = fovModifier;
     }
 }

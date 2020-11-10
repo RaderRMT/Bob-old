@@ -73,6 +73,68 @@ public class Version754 {
                 return new KeepAlive(id, timestamp, size, data);
             case 0x20:
                 return new ChunkData(id, timestamp, size, data);
+            case 0x21:
+                return new Effect(id, timestamp, size, data);
+            case 0x22:
+                return new Particle(id, timestamp, size, data);
+            case 0x23:
+                return new UpdateLight(id, timestamp, size, data);
+            case 0x24:
+                return new JoinGame(id, timestamp, size, data);
+            case 0x25:
+                return new MapData(id, timestamp, size, data);
+            case 0x26:
+                return new TradeList(id, timestamp, size, data);
+            case 0x27:
+                return new EntityPosition(id, timestamp, size, data);
+            case 0x28:
+                return new EntityPositionRotation(id, timestamp, size, data);
+            case 0x29:
+                return new EntityRotation(id, timestamp, size, data);
+            case 0x2a:
+                return new EntityMovement(id, timestamp, size, data);
+            case 0x2b:
+                return new VehicleMove(id, timestamp, size, data);
+            case 0x2c:
+                return new OpenBook(id, timestamp, size, data);
+            case 0x2d:
+                return new OpenWindow(id, timestamp, size, data);
+            case 0x2e:
+                return new OpenSignEditor(id, timestamp, size, data);
+            case 0x2f:
+                return new CraftRecipeResponse(id, timestamp, size, data);
+            case 0x30:
+                return new PlayerAbilities(id, timestamp, size, data);
+            case 0x31:
+                return new CombatEvent(id, timestamp, size, data);
+            case 0x32:
+                return new PlayerInfo(id, timestamp, size, data);
+            case 0x33:
+                return new FacePlayer(id, timestamp, size, data);
+            case 0x34:
+                return new PlayerPositionAndLook(id, timestamp, size, data);
+            case 0x35:
+                return new UnlockRecipes(id, timestamp, size, data);
+            case 0x36:
+                return new DestroyEntities(id, timestamp, size, data);
+            case 0x37:
+                return new RemoveEntityEffect(id, timestamp, size, data);
+            case 0x38:
+                return new ResourcePackSend(id, timestamp, size, data);
+            case 0x39:
+                return new Respawn(id, timestamp, size, data);
+            case 0x3a:
+                return new EntityHeadLook(id, timestamp, size, data);
+            case 0x3b:
+                return new MultiBlockChange(id, timestamp, size, data);
+            case 0x3c:
+                return new SelectAdvancementTab(id, timestamp, size, data);
+            case 0x3d:
+                return new WorldBorder(id, timestamp, size, data);
+            case 0x3e:
+                return new Camera(id, timestamp, size, data);
+            case 0x3f:
+                return new HeldItemChange(id, timestamp, size, data);
         }
 
         return null;

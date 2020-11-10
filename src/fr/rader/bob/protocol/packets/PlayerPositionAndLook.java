@@ -2,37 +2,36 @@ package fr.rader.bob.protocol.packets;
 
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
-import fr.rader.bob.types.UUID;
 import fr.rader.bob.protocol.Packet;
 
-public class SpawnPlayer implements Packet {
+public class PlayerPositionAndLook implements Packet {
 
     private byte packetID;
     private int timestamp;
     private int size;
 
-    private int entityID;
-    private UUID playerUUID;
     private double x;
     private double y;
     private double z;
-    private int yaw;
-    private int pitch;
+    private float yaw;
+    private float pitch;
+    private int flags;
+    private int teleportID;
 
-    public SpawnPlayer(byte id, int timestamp, int size, byte[] rawData) {
+    public PlayerPositionAndLook(byte id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
 
         DataReader reader = new DataReader(rawData);
 
-        entityID = reader.readVarInt();
-        playerUUID = reader.readUUID();
         x = reader.readDouble();
         y = reader.readDouble();
         z = reader.readDouble();
-        yaw = reader.readByte();
-        pitch = reader.readByte();
+        yaw = reader.readFloat();
+        pitch = reader.readFloat();
+        flags = reader.readByte();
+        teleportID = reader.readVarInt();
     }
 
     @Override
@@ -43,13 +42,13 @@ public class SpawnPlayer implements Packet {
         writer.writeInt(size);
         writer.writeInt(packetID);
 
-        writer.writeVarInt(entityID);
-        writer.writeUUID(playerUUID);
         writer.writeDouble(x);
         writer.writeDouble(y);
         writer.writeDouble(z);
-        writer.writeByte(yaw);
-        writer.writeByte(pitch);
+        writer.writeFloat(yaw);
+        writer.writeFloat(pitch);
+        writer.writeByte(flags);
+        writer.writeVarInt(teleportID);
 
         return writer.getData();
     }
@@ -67,22 +66,6 @@ public class SpawnPlayer implements Packet {
     @Override
     public int getTimestamp() {
         return timestamp;
-    }
-
-    public int getEntityID() {
-        return entityID;
-    }
-
-    public void setEntityID(int entityID) {
-        this.entityID = entityID;
-    }
-
-    public UUID getPlayerUUID() {
-        return playerUUID;
-    }
-
-    public void setPlayerUUID(UUID playerUUID) {
-        this.playerUUID = playerUUID;
     }
 
     public double getX() {
@@ -109,19 +92,35 @@ public class SpawnPlayer implements Packet {
         this.z = z;
     }
 
-    public int getPitch() {
-        return pitch;
-    }
-
-    public void setPitch(int pitch) {
-        this.pitch = pitch;
-    }
-
-    public int getYaw() {
+    public float getYaw() {
         return yaw;
     }
 
-    public void setYaw(int yaw) {
+    public void setYaw(float yaw) {
         this.yaw = yaw;
+    }
+
+    public float getPitch() {
+        return pitch;
+    }
+
+    public void setPitch(float pitch) {
+        this.pitch = pitch;
+    }
+
+    public int getFlags() {
+        return flags;
+    }
+
+    public void setFlags(int flags) {
+        this.flags = flags;
+    }
+
+    public int getTeleportID() {
+        return teleportID;
+    }
+
+    public void setTeleportID(int teleportID) {
+        this.teleportID = teleportID;
     }
 }

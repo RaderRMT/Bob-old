@@ -1,4 +1,4 @@
-package fr.rader.bob;
+package fr.rader.bob.types;
 
 public class Position {
 

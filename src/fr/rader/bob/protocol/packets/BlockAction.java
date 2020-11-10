@@ -2,7 +2,7 @@ package fr.rader.bob.protocol.packets;
 
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
-import fr.rader.bob.Position;
+import fr.rader.bob.types.Position;
 import fr.rader.bob.protocol.Packet;
 
 public class BlockAction implements Packet {

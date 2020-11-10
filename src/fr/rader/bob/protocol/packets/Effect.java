@@ -2,30 +2,31 @@ package fr.rader.bob.protocol.packets;
 
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
-import fr.rader.bob.types.Position;
-import fr.rader.bob.nbt.NBTTagCompound;
 import fr.rader.bob.protocol.Packet;
+import fr.rader.bob.types.Position;
 
-public class BlockEntityData implements Packet {
+public class Effect implements Packet {
 
     private byte packetID;
     private int timestamp;
     private int size;
 
+    private int effectID;
     private Position location;
-    private int action;
-    private NBTTagCompound data;
+    private int data;
+    private boolean disableRelativeVolume;
 
-    public BlockEntityData(byte id, int timestamp, int size, byte[] rawData) {
+    public Effect(byte id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
 
         DataReader reader = new DataReader(rawData);
 
+        effectID = reader.readInt();
         location = reader.readPosition();
-        action = reader.readByte();
-        data = reader.readNBT();
+        data = reader.readInt();
+        disableRelativeVolume = reader.readBoolean();
     }
 
     @Override
@@ -36,9 +37,10 @@ public class BlockEntityData implements Packet {
         writer.writeInt(size);
         writer.writeInt(packetID);
 
+        writer.writeInt(effectID);
         writer.writePosition(location);
-        writer.writeByte(action);
-        writer.writeNBT(data);
+        writer.writeInt(data);
+        writer.writeBoolean(disableRelativeVolume);
 
         return writer.getData();
     }
@@ -58,6 +60,14 @@ public class BlockEntityData implements Packet {
         return timestamp;
     }
 
+    public int getEffectID() {
+        return effectID;
+    }
+
+    public void setEffectID(int effectID) {
+        this.effectID = effectID;
+    }
+
     public Position getLocation() {
         return location;
     }
@@ -66,19 +76,19 @@ public class BlockEntityData implements Packet {
         this.location = location;
     }
 
-    public int getAction() {
-        return action;
-    }
-
-    public void setAction(int action) {
-        this.action = action;
-    }
-
-    public NBTTagCompound getData() {
+    public int getData() {
         return data;
     }
 
-    public void setData(NBTTagCompound data) {
+    public void setData(int data) {
         this.data = data;
+    }
+
+    public boolean isDisableRelativeVolume() {
+        return disableRelativeVolume;
+    }
+
+    public void setDisableRelativeVolume(boolean disableRelativeVolume) {
+        this.disableRelativeVolume = disableRelativeVolume;
     }
 }

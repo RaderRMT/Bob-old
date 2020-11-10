@@ -1,6 +1,9 @@
 package fr.rader.bob;
 
 import fr.rader.bob.nbt.NBTTagCompound;
+import fr.rader.bob.types.Position;
+import fr.rader.bob.types.Slot;
+import fr.rader.bob.types.UUID;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -126,8 +129,13 @@ public class DataWriter {
         writeChat(identifier);
     }
 
-    public void writeVarIntArray(int[] biomes) {
-        for(int biome : biomes)
-            writeVarInt(biome);
+    public void writeVarIntArray(int[] values) {
+        for(int value : values)
+            writeVarInt(value);
+    }
+
+    public void writeFloatArray(float[] values) {
+        for(float value : values)
+            writeFloat(value);
     }
 }

@@ -1,4 +1,4 @@
-package fr.rader.bob;
+package fr.rader.bob.types;
 
 import fr.rader.bob.nbt.NBTTagCompound;
 

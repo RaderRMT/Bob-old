@@ -2,20 +2,18 @@ package fr.rader.bob.protocol.packets;
 
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
-import fr.rader.bob.types.Position;
 import fr.rader.bob.protocol.Packet;
 
-public class BlockBreakAnimation implements Packet {
+public class RemoveEntityEffect implements Packet {
 
     private byte packetID;
     private int timestamp;
     private int size;
 
     private int entityID;
-    private Position location;
-    private int destroyStage;
+    private int effectID;
 
-    public BlockBreakAnimation(byte id, int timestamp, int size, byte[] rawData) {
+    public RemoveEntityEffect(byte id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -23,8 +21,7 @@ public class BlockBreakAnimation implements Packet {
         DataReader reader = new DataReader(rawData);
 
         entityID = reader.readVarInt();
-        location = reader.readPosition();
-        destroyStage = reader.readByte();
+        effectID = reader.readByte();
     }
 
     @Override
@@ -36,8 +33,7 @@ public class BlockBreakAnimation implements Packet {
         writer.writeInt(packetID);
 
         writer.writeVarInt(entityID);
-        writer.writePosition(location);
-        writer.writeByte(destroyStage);
+        writer.writeByte(effectID);
 
         return writer.getData();
     }
@@ -65,19 +61,11 @@ public class BlockBreakAnimation implements Packet {
         this.entityID = entityID;
     }
 
-    public Position getLocation() {
-        return location;
+    public int getEffectID() {
+        return effectID;
     }
 
-    public void setLocation(Position location) {
-        this.location = location;
-    }
-
-    public int getDestroyStage() {
-        return destroyStage;
-    }
-
-    public void setDestroyStage(int destroyStage) {
-        this.destroyStage = destroyStage;
+    public void setEffectID(int effectID) {
+        this.effectID = effectID;
     }
 }

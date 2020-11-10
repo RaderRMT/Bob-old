@@ -3,6 +3,9 @@ package fr.rader.bob;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import fr.rader.bob.nbt.NBTTagCompound;
+import fr.rader.bob.types.Position;
+import fr.rader.bob.types.Slot;
+import fr.rader.bob.types.UUID;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -168,10 +171,10 @@ public class DataReader {
         return readString(readByte());
     }
 
-    public int[] readVarIntArray(int biomesLength) {
-        int[] out = new int[biomesLength];
+    public int[] readVarIntArray(int size) {
+        int[] out = new int[size];
 
-        for(int i = 0; i < biomesLength; i++) {
+        for(int i = 0; i < size; i++) {
             out[i] = readVarInt();
         }
 

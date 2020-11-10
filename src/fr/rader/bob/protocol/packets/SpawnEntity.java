@@ -3,7 +3,7 @@ package fr.rader.bob.protocol.packets;
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
 import fr.rader.bob.protocol.Packet;
-import fr.rader.bob.UUID;
+import fr.rader.bob.types.UUID;
 
 public class SpawnEntity implements Packet {
 
@@ -17,8 +17,8 @@ public class SpawnEntity implements Packet {
     private double x;
     private double y;
     private double z;
-    private int pitch;
     private int yaw;
+    private int pitch;
     private int data;
     private int velX;
     private int velY;
