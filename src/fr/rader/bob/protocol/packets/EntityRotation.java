@@ -6,7 +6,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class EntityRotation implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -15,7 +15,7 @@ public class EntityRotation implements Packet {
     private int pitch;
     private boolean onGround;
 
-    public EntityRotation(byte id, int timestamp, int size, byte[] rawData) {
+    public EntityRotation(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -34,7 +34,7 @@ public class EntityRotation implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeVarInt(entityID);
         writer.writeByte(yaw);
@@ -50,7 +50,7 @@ public class EntityRotation implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

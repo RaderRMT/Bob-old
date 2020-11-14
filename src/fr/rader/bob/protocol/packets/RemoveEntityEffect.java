@@ -6,14 +6,14 @@ import fr.rader.bob.protocol.Packet;
 
 public class RemoveEntityEffect implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
     private int entityID;
     private int effectID;
 
-    public RemoveEntityEffect(byte id, int timestamp, int size, byte[] rawData) {
+    public RemoveEntityEffect(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -30,7 +30,7 @@ public class RemoveEntityEffect implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeVarInt(entityID);
         writer.writeByte(effectID);
@@ -44,7 +44,7 @@ public class RemoveEntityEffect implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

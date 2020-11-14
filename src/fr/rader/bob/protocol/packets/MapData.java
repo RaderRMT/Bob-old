@@ -6,7 +6,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class MapData implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -23,7 +23,7 @@ public class MapData implements Packet {
     private int length;
     private byte[] data;
 
-    public MapData(byte id, int timestamp, int size, byte[] rawData) {
+    public MapData(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -67,7 +67,7 @@ public class MapData implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeVarInt(mapID);
         writer.writeByte(scale);
@@ -95,7 +95,7 @@ public class MapData implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

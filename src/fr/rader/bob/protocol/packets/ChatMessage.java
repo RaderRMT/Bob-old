@@ -7,7 +7,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class ChatMessage implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -15,7 +15,7 @@ public class ChatMessage implements Packet {
     private int position;
     private UUID sender;
 
-    public ChatMessage(byte id, int timestamp, int size, byte[] rawData) {
+    public ChatMessage(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -33,7 +33,7 @@ public class ChatMessage implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeChat(jsonData);
         writer.writeByte(position);
@@ -48,7 +48,7 @@ public class ChatMessage implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

@@ -5,13 +5,13 @@ import fr.rader.bob.protocol.Packet;
 
 public class WorldBorder implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
     private byte[] rawData;
 
-    public WorldBorder(byte id, int timestamp, int size, byte[] rawData) {
+    public WorldBorder(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -24,7 +24,9 @@ public class WorldBorder implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
+
+        writer.writeByteArray(rawData);
 
         return writer.getData();
     }
@@ -35,7 +37,7 @@ public class WorldBorder implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

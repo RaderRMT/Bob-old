@@ -6,13 +6,13 @@ import fr.rader.bob.protocol.Packet;
 
 public class Disconnect implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
     private String reason;
 
-    public Disconnect(byte id, int timestamp, int size, byte[] rawData) {
+    public Disconnect(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -28,7 +28,7 @@ public class Disconnect implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeChat(reason);
 
@@ -41,7 +41,7 @@ public class Disconnect implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

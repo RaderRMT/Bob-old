@@ -7,7 +7,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class ChunkData implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int packetSize;
 
@@ -23,7 +23,7 @@ public class ChunkData implements Packet {
     private int blockEntitiesAmount;
     private NBTTagCompound[] blockEntities;
 
-    public ChunkData(byte id, int timestamp, int packetSize, byte[] rawData) {
+    public ChunkData(int id, int timestamp, int packetSize, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.packetSize = packetSize;
@@ -57,7 +57,7 @@ public class ChunkData implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(packetSize);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeInt(chunkX);
         writer.writeInt(chunkZ);
@@ -87,7 +87,7 @@ public class ChunkData implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

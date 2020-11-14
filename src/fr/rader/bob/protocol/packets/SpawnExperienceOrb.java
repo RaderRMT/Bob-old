@@ -6,7 +6,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class SpawnExperienceOrb implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -16,7 +16,7 @@ public class SpawnExperienceOrb implements Packet {
     private double z;
     private int count; // amount of xp
 
-    public SpawnExperienceOrb(byte id, int timestamp, int size, byte[] rawData) {
+    public SpawnExperienceOrb(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -36,7 +36,7 @@ public class SpawnExperienceOrb implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeVarInt(entityID);
         writer.writeDouble(x);
@@ -53,7 +53,7 @@ public class SpawnExperienceOrb implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

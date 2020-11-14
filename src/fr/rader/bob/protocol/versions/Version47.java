@@ -4,7 +4,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class Version47 {
 
-    public static Packet getPacket(byte id, int timestamp, int size, byte[] data) {
+    public static Packet getPacket(int id, int timestamp, int size, byte[] data) {
         return null;
     }
 }

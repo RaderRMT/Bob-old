@@ -7,7 +7,7 @@ import fr.rader.bob.types.Slot;
 
 public class Particle implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -23,7 +23,7 @@ public class Particle implements Packet {
     private int particleCount;
     private Object data;
 
-    public Particle(byte id, int timestamp, int size, byte[] rawData) {
+    public Particle(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -66,7 +66,7 @@ public class Particle implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeInt(particleID);
         writer.writeBoolean(longDistance);
@@ -97,7 +97,7 @@ public class Particle implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

@@ -6,13 +6,13 @@ import fr.rader.bob.protocol.Packet;
 
 public class EntityMovement implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
     private int entityID;
 
-    public EntityMovement(byte id, int timestamp, int size, byte[] rawData) {
+    public EntityMovement(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -28,7 +28,7 @@ public class EntityMovement implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeVarInt(entityID);
 
@@ -41,7 +41,7 @@ public class EntityMovement implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

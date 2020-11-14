@@ -7,7 +7,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class BlockBreakAnimation implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -15,7 +15,7 @@ public class BlockBreakAnimation implements Packet {
     private Position location;
     private int destroyStage;
 
-    public BlockBreakAnimation(byte id, int timestamp, int size, byte[] rawData) {
+    public BlockBreakAnimation(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -33,7 +33,7 @@ public class BlockBreakAnimation implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeVarInt(entityID);
         writer.writePosition(location);
@@ -48,7 +48,7 @@ public class BlockBreakAnimation implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

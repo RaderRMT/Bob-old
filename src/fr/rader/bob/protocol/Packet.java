@@ -6,7 +6,7 @@ public interface Packet {
 
     int getLength();
 
-    byte getPacketID();
+    int getPacketID();
 
     int getTimestamp();
 }

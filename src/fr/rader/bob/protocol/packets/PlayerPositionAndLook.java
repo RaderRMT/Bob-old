@@ -6,7 +6,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class PlayerPositionAndLook implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -18,7 +18,7 @@ public class PlayerPositionAndLook implements Packet {
     private int flags;
     private int teleportID;
 
-    public PlayerPositionAndLook(byte id, int timestamp, int size, byte[] rawData) {
+    public PlayerPositionAndLook(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -40,7 +40,7 @@ public class PlayerPositionAndLook implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeDouble(x);
         writer.writeDouble(y);
@@ -59,7 +59,7 @@ public class PlayerPositionAndLook implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

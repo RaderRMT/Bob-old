@@ -6,14 +6,14 @@ import fr.rader.bob.protocol.Packet;
 
 public class EntityHeadLook implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
     private int entityID;
     private int headYaw;
 
-    public EntityHeadLook(byte id, int timestamp, int size, byte[] rawData) {
+    public EntityHeadLook(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -30,7 +30,7 @@ public class EntityHeadLook implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeVarInt(entityID);
         writer.writeByte(headYaw);
@@ -44,7 +44,7 @@ public class EntityHeadLook implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

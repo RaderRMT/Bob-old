@@ -7,7 +7,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class WindowItems implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -15,7 +15,7 @@ public class WindowItems implements Packet {
     private int count;
     private Slot[] slotData;
 
-    public WindowItems(byte id, int timestamp, int size, byte[] rawData) {
+    public WindowItems(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -37,7 +37,7 @@ public class WindowItems implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeByte(windowID);
         writer.writeShort(count);
@@ -55,7 +55,7 @@ public class WindowItems implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

@@ -6,14 +6,14 @@ import fr.rader.bob.protocol.Packet;
 
 public class SetCooldown implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
     private int itemID;
     private int cooldownTicks;
 
-    public SetCooldown(byte id, int timestamp, int size, byte[] rawData) {
+    public SetCooldown(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -30,7 +30,7 @@ public class SetCooldown implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeVarInt(itemID);
         writer.writeVarInt(cooldownTicks);
@@ -44,7 +44,7 @@ public class SetCooldown implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

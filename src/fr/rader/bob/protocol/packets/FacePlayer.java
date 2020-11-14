@@ -6,7 +6,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class FacePlayer implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -18,7 +18,7 @@ public class FacePlayer implements Packet {
     private int entityID;
     private int entityFeetOrEyes;
 
-    public FacePlayer(byte id, int timestamp, int size, byte[] rawData) {
+    public FacePlayer(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -43,7 +43,7 @@ public class FacePlayer implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeVarInt(feetOrEyes);
         writer.writeDouble(targetX);
@@ -65,7 +65,7 @@ public class FacePlayer implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

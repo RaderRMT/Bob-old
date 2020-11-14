@@ -1,18 +1,17 @@
 package fr.rader.bob.protocol.packets;
 
-import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
 import fr.rader.bob.protocol.Packet;
 
 public class UnlockRecipes implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
     private byte[] rawData;
 
-    public UnlockRecipes(byte id, int timestamp, int size, byte[] rawData) {
+    public UnlockRecipes(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -25,7 +24,7 @@ public class UnlockRecipes implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeByteArray(rawData);
 
@@ -38,7 +37,7 @@ public class UnlockRecipes implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

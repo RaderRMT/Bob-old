@@ -6,14 +6,14 @@ import fr.rader.bob.protocol.Packet;
 
 public class UnloadChunk implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
     private int chunkX;
     private int chunkZ;
 
-    public UnloadChunk(byte id, int timestamp, int size, byte[] rawData) {
+    public UnloadChunk(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -30,7 +30,7 @@ public class UnloadChunk implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeInt(chunkX);
         writer.writeInt(chunkZ);
@@ -44,7 +44,7 @@ public class UnloadChunk implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

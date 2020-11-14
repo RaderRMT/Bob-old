@@ -7,7 +7,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class BossBar implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -21,7 +21,7 @@ public class BossBar implements Packet {
     private int division; // also for action == 4
     private int flags;    // also for action == 5
 
-    public BossBar(byte id, int timestamp, int size, byte[] rawData) {
+    public BossBar(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -58,7 +58,7 @@ public class BossBar implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeUUID(uuid);
         writer.writeVarInt(action);
@@ -92,7 +92,7 @@ public class BossBar implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

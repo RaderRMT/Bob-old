@@ -6,7 +6,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class OpenHorseWindow implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -14,7 +14,7 @@ public class OpenHorseWindow implements Packet {
     private int slotNumber;
     private int entityID;
 
-    public OpenHorseWindow(byte id, int timestamp, int size, byte[] rawData) {
+    public OpenHorseWindow(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -32,7 +32,7 @@ public class OpenHorseWindow implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeByte(windowID);
         writer.writeVarInt(slotNumber);
@@ -47,7 +47,7 @@ public class OpenHorseWindow implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

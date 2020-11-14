@@ -1,6 +1,7 @@
 package fr.rader.bob;
 
 import fr.rader.bob.nbt.NBTTagCompound;
+import fr.rader.bob.types.Equipment;
 import fr.rader.bob.types.Position;
 import fr.rader.bob.types.Slot;
 import fr.rader.bob.types.UUID;
@@ -81,7 +82,8 @@ public class DataWriter {
     }
 
     public void writeNBT(NBTTagCompound nbt) {
-        writeByteArray(nbt.toByteArray(false));
+        if(nbt == null) writeByte(0x00);
+        else writeByteArray(nbt.toByteArray(false));
     }
 
     public byte[] getData() {
@@ -123,6 +125,11 @@ public class DataWriter {
             writeByte(slot.getItemCount());
             writeNBT(slot.getNbt());
         }
+    }
+
+    public void writeEquipment(Equipment equipment) {
+        writeByte(equipment.getSlot());
+        writeSlot(equipment.getItem());
     }
 
     public void writeIdentifier(String identifier) {

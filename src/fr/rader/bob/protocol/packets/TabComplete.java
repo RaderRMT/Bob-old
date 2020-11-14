@@ -6,7 +6,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class TabComplete implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -17,7 +17,7 @@ public class TabComplete implements Packet {
 
     private Match[] matches;
 
-    public TabComplete(byte packetID, int timestamp, int size, byte[] rawData) {
+    public TabComplete(int packetID, int timestamp, int size, byte[] rawData) {
         this.packetID = packetID;
         this.timestamp = timestamp;
         this.size = size;
@@ -47,7 +47,7 @@ public class TabComplete implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeVarInt(id);
         writer.writeVarInt(start);
@@ -71,7 +71,7 @@ public class TabComplete implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

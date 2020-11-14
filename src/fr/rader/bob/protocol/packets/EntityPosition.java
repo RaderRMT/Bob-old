@@ -6,7 +6,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class EntityPosition implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -16,7 +16,7 @@ public class EntityPosition implements Packet {
     private int deltaZ;
     private boolean onGround;
 
-    public EntityPosition(byte id, int timestamp, int size, byte[] rawData) {
+    public EntityPosition(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -36,7 +36,7 @@ public class EntityPosition implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeVarInt(entityID);
         writer.writeShort(deltaX);
@@ -53,7 +53,7 @@ public class EntityPosition implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

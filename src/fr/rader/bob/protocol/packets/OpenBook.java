@@ -6,13 +6,13 @@ import fr.rader.bob.protocol.Packet;
 
 public class OpenBook implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
     private int hand;
 
-    public OpenBook(byte id, int timestamp, int size, byte[] rawData) {
+    public OpenBook(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -28,7 +28,7 @@ public class OpenBook implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeVarInt(hand);
 
@@ -41,12 +41,20 @@ public class OpenBook implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 
     @Override
     public int getTimestamp() {
         return timestamp;
+    }
+
+    public int getHand() {
+        return hand;
+    }
+
+    public void setHand(int hand) {
+        this.hand = hand;
     }
 }

@@ -6,14 +6,14 @@ import fr.rader.bob.protocol.Packet;
 
 public class CraftRecipeResponse implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
     private int windowID;
     private String recipe;
 
-    public CraftRecipeResponse(byte id, int timestamp, int size, byte[] rawData) {
+    public CraftRecipeResponse(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -30,7 +30,7 @@ public class CraftRecipeResponse implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeByte(windowID);
         writer.writeIdentifier(recipe);
@@ -44,7 +44,7 @@ public class CraftRecipeResponse implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

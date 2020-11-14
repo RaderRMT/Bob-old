@@ -8,7 +8,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class BlockEntityData implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -16,7 +16,7 @@ public class BlockEntityData implements Packet {
     private int action;
     private NBTTagCompound data;
 
-    public BlockEntityData(byte id, int timestamp, int size, byte[] rawData) {
+    public BlockEntityData(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -34,7 +34,7 @@ public class BlockEntityData implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writePosition(location);
         writer.writeByte(action);
@@ -49,7 +49,7 @@ public class BlockEntityData implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

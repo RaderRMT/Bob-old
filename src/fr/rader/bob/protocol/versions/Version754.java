@@ -5,7 +5,7 @@ import fr.rader.bob.protocol.packets.*;
 
 public class Version754 {
 
-    public static Packet getPacket(byte id, int timestamp, int size, byte[] data) {
+    public static Packet getPacket(int id, int timestamp, int size, byte[] data) {
         switch(id) {
             case 0x00:
                 return new SpawnEntity(id, timestamp, size, data);
@@ -135,6 +135,62 @@ public class Version754 {
                 return new Camera(id, timestamp, size, data);
             case 0x3f:
                 return new HeldItemChange(id, timestamp, size, data);
+            case 0x40:
+                return new UpdateViewPosition(id, timestamp, size, data);
+            case 0x41:
+                return new UpdateViewDistance(id, timestamp, size, data);
+            case 0x42:
+                return new SpawnPosition(id, timestamp, size, data);
+            case 0x43:
+                return new DisplayScoreboard(id, timestamp, size, data);
+            case 0x44:
+                return new EntityMetadata(id, timestamp, size, data);
+            case 0x45:
+                return new AttachEntity(id, timestamp, size, data);
+            case 0x46:
+                return new EntityVelocity(id, timestamp, size, data);
+            case 0x47:
+                return new EntityEquipment(id, timestamp, size, data);
+            case 0x48:
+                return new SetExperience(id, timestamp, size, data);
+            case 0x49:
+                return new UpdateHealth(id, timestamp, size, data);
+            case 0x4a:
+                return new ScoreboardObjective(id, timestamp, size, data);
+            case 0x4b:
+                return new SetPassengers(id, timestamp, size, data);
+            case 0x4c:
+                return new Teams(id, timestamp, size, data);
+            case 0x4d:
+                return new UpdateScore(id, timestamp, size, data);
+            case 0x4e:
+                return new TimeUpdate(id, timestamp, size, data);
+            case 0x4f:
+                return new Title(id, timestamp, size, data);
+            case 0x50:
+                return new EntitySoundEffect(id, timestamp, size, data);
+            case 0x51:
+                return new SoundEffect(id, timestamp, size, data);
+            case 0x52:
+                return new StopSound(id, timestamp, size, data);
+            case 0x53:
+                return new PlayerListHeaderFooter(id, timestamp, size, data);
+            case 0x54:
+                return new NBTQueryResponse(id, timestamp, size, data);
+            case 0x55:
+                return new CollectItem(id, timestamp, size, data);
+            case 0x56:
+                return new EntityTeleport(id, timestamp, size, data);
+            case 0x57:
+                return new Advancements(id, timestamp, size, data);
+            case 0x58:
+                return new EntityProperties(id, timestamp, size, data);
+            case 0x59:
+                return new EntityEffect(id, timestamp, size, data);
+            case 0x5a:
+                return new DeclareRecipes(id, timestamp, size, data);
+            case 0x5b:
+                return new Tags(id, timestamp, size, data);
         }
 
         return null;

@@ -6,7 +6,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class CombatEvent implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -16,7 +16,7 @@ public class CombatEvent implements Packet {
     private int playerID; // event == 2
     private String message; // event == 2
 
-    public CombatEvent(byte id, int timestamp, int size, byte[] rawData) {
+    public CombatEvent(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -43,7 +43,7 @@ public class CombatEvent implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeVarInt(event);
         switch(event) {
@@ -67,7 +67,7 @@ public class CombatEvent implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

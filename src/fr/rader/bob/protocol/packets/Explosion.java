@@ -6,7 +6,7 @@ import fr.rader.bob.protocol.Packet;
 
 public class Explosion implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
@@ -20,7 +20,7 @@ public class Explosion implements Packet {
     private float playerMotionY;
     private float playerMotionZ;
 
-    public Explosion(byte id, int timestamp, int size, byte[] rawData) {
+    public Explosion(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -51,7 +51,7 @@ public class Explosion implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeFloat(x);
         writer.writeFloat(y);
@@ -78,7 +78,7 @@ public class Explosion implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 

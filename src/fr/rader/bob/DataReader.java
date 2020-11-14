@@ -3,6 +3,7 @@ package fr.rader.bob;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import fr.rader.bob.nbt.NBTTagCompound;
+import fr.rader.bob.types.Equipment;
 import fr.rader.bob.types.Position;
 import fr.rader.bob.types.Slot;
 import fr.rader.bob.types.UUID;
@@ -130,6 +131,9 @@ public class DataReader {
     }
 
     public NBTTagCompound readNBT() {
+        if(readByte() == 0x00) return null;
+        else removeOffset(1);
+
         NBTTagCompound out = new NBTTagCompound(getFromOffset(false), false);
         addOffset(out.getLength());
         return out;
@@ -145,6 +149,10 @@ public class DataReader {
         }
 
         return new Slot(false);
+    }
+
+    public Equipment readEquipment() {
+        return new Equipment(readByte(), readSlot());
     }
 
     public int getOffset() {

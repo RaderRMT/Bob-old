@@ -6,14 +6,14 @@ import fr.rader.bob.protocol.Packet;
 
 public class ChangeGameState implements Packet {
 
-    private byte packetID;
+    private int packetID;
     private int timestamp;
     private int size;
 
     private int reason;
     private float value;
 
-    public ChangeGameState(byte id, int timestamp, int size, byte[] rawData) {
+    public ChangeGameState(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
         this.timestamp = timestamp;
         this.size = size;
@@ -30,7 +30,7 @@ public class ChangeGameState implements Packet {
 
         writer.writeInt(timestamp);
         writer.writeInt(size);
-        writer.writeInt(packetID);
+        writer.writeVarInt(packetID);
 
         writer.writeByte(reason);
         writer.writeFloat(value);
@@ -44,7 +44,7 @@ public class ChangeGameState implements Packet {
     }
 
     @Override
-    public byte getPacketID() {
+    public int getPacketID() {
         return packetID;
     }
 
