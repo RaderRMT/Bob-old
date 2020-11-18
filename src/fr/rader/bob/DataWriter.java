@@ -63,6 +63,19 @@ public class DataWriter {
         } while (value != 0);
     }
 
+    public void writeVarLong(long value) {
+        do {
+            byte temp = (byte)(value & 0b01111111);
+            value >>>= 7;
+
+            if(value != 0) {
+                temp |= 0b10000000;
+            }
+
+            writeByte(temp);
+        } while (value != 0);
+    }
+
     public void writeString(String value) {
         writeByteArray(value.getBytes(StandardCharsets.UTF_8));
     }
@@ -144,5 +157,10 @@ public class DataWriter {
     public void writeFloatArray(float[] values) {
         for(float value : values)
             writeFloat(value);
+    }
+
+    public void writeVarLongArray(long[] values) {
+        for(long value : values)
+            writeVarLong(value);
     }
 }

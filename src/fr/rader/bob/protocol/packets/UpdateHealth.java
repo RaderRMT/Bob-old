@@ -35,7 +35,7 @@ public class UpdateHealth implements Packet {
         writer.writeVarInt(packetID);
 
         writer.writeFloat(health);
-        writer.writeInt(food);
+        writer.writeVarInt(food);
         writer.writeFloat(foodSaturation);
 
         return writer.getData();

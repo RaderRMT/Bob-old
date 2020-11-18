@@ -13,7 +13,7 @@ public class MultiBlockChange implements Packet {
     private long chunkSectionPosition;
     private boolean invertTrustEdges;
     private int blocksArraySize;
-    private byte[] blocksData;
+    private long[] blocksData;
 
     public MultiBlockChange(int id, int timestamp, int size, byte[] rawData) {
         this.packetID = id;
@@ -25,7 +25,7 @@ public class MultiBlockChange implements Packet {
         chunkSectionPosition = reader.readLong();
         invertTrustEdges = reader.readBoolean();
         blocksArraySize = reader.readVarInt();
-        blocksData = reader.readFollowingBytes(blocksArraySize);
+        blocksData = reader.readVarLongArray(blocksArraySize);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class MultiBlockChange implements Packet {
         writer.writeLong(chunkSectionPosition);
         writer.writeBoolean(invertTrustEdges);
         writer.writeVarInt(blocksArraySize);
-        writer.writeByteArray(blocksData);
+        writer.writeVarLongArray(blocksData);
 
         return writer.getData();
     }
@@ -83,11 +83,11 @@ public class MultiBlockChange implements Packet {
         this.blocksArraySize = blocksArraySize;
     }
 
-    public byte[] getBlocksData() {
+    public long[] getBlocksData() {
         return blocksData;
     }
 
-    public void setBlocksData(byte[] blocksData) {
+    public void setBlocksData(long[] blocksData) {
         this.blocksData = blocksData;
     }
 }

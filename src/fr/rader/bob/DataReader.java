@@ -90,6 +90,24 @@ public class DataReader {
         return result;
     }
 
+    public long readVarLong() {
+        int numRead = 0;
+        long result = 0;
+        int read;
+        do {
+            read = readByte();
+            long value = (read & 0b01111111);
+            result |= (value << (7 * numRead));
+
+            numRead++;
+            if(numRead > 10) {
+                throw new RuntimeException("VarLong is too big");
+            }
+        } while ((read & 0b10000000) != 0);
+
+        return result;
+    }
+
     public String readString(int size) {
         String out = "";
 
@@ -184,6 +202,16 @@ public class DataReader {
 
         for(int i = 0; i < size; i++) {
             out[i] = readVarInt();
+        }
+
+        return out;
+    }
+
+    public long[] readVarLongArray(int size) {
+        long[] out = new long[size];
+
+        for(int i = 0; i < size; i++) {
+            out[i] = readVarLong();
         }
 
         return out;

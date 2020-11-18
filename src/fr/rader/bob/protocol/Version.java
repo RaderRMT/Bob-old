@@ -4,9 +4,7 @@ import fr.rader.bob.protocol.versions.*;
 
 public class Version {
 
-    public static Packet getPacket(int id, int timestamp, int size, byte[] data) {
-        ProtocolVersion current = ProtocolVersion.getCurrentProtocol();
-
+    public static Packet getPacket(int id, int timestamp, int size, byte[] data, ProtocolVersion current) {
         if (ProtocolVersion.v1_7_6.equals(current)) {
             return Version5.getPacket(id, timestamp, size, data);
         } else if (ProtocolVersion.v1_8.equals(current)) {
