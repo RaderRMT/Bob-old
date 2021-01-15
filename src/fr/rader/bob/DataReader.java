@@ -2,14 +2,14 @@ package fr.rader.bob;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import fr.rader.bob.nbt.NBTTagCompound;
-import fr.rader.bob.types.Equipment;
-import fr.rader.bob.types.Position;
-import fr.rader.bob.types.Slot;
-import fr.rader.bob.types.UUID;
+import fr.rader.bob.nbt.NBTCompound;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
+import java.util.UUID;
 
 public class DataReader {
 
@@ -18,6 +18,14 @@ public class DataReader {
 
     public DataReader(byte[] data) {
         this.data = data;
+    }
+
+    public DataReader(File file) {
+        try {
+            this.data = Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public DataReader(byte[] data, int startAt) {
@@ -143,34 +151,17 @@ public class DataReader {
         return out;
     }
 
-    public Position readPosition() {
-        long rawPos = readLong();
-        return new Position((int) (rawPos >>> 38), (int) (rawPos & 0xFFF), (int) (rawPos << 26 >>> 38));
-    }
-
-    public NBTTagCompound readNBT() {
+    public NBTCompound readNBT() {
         if(readByte() == 0x00) return null;
         else removeOffset(1);
 
-        NBTTagCompound out = new NBTTagCompound(getFromOffset(false), false);
+        NBTCompound out = new NBTCompound(getFromOffset(false), true);
         addOffset(out.getLength());
         return out;
     }
 
     public String readChat() {
         return new Gson().fromJson(readString(readVarInt()), JsonObject.class).toString();
-    }
-
-    public Slot readSlot() {
-        if(readBoolean()) {
-            return new Slot(true, readVarInt(), readByte(), readNBT());
-        }
-
-        return new Slot(false);
-    }
-
-    public Equipment readEquipment() {
-        return new Equipment(readByte(), readSlot());
     }
 
     public int getOffset() {
@@ -183,10 +174,6 @@ public class DataReader {
 
     public void removeOffset(int i) {
         this.offset -= i;
-    }
-
-    public UUID readUUID() {
-        return new UUID(readFollowingBytes(16));
     }
 
     public int getDataLength() {
@@ -215,5 +202,30 @@ public class DataReader {
         }
 
         return out;
+    }
+
+    public int[] readIntArray(int size) {
+        int[] out = new int[size];
+
+        for(int i = 0; i < size; i++) {
+            out[i] = readInt();
+        }
+
+        return out;
+    }
+
+    public long[] readLongArray(int size) {
+        long[] out = new long[size];
+
+        for(int i = 0; i < size; i++) {
+            out[i] = readLong();
+        }
+
+        return out;
+    }
+
+    public UUID readUUID() {
+        ByteBuffer byteBuffer = ByteBuffer.wrap(readFollowingBytes(16));
+        return new UUID(byteBuffer.getLong(), byteBuffer.getLong());
     }
 }

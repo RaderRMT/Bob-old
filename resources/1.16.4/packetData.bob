@@ -1,0 +1,360 @@
+// Spawn Entity
+00: {
+    varint "Entity ID"
+    uuid "Object UUID"
+    varint "Type"
+    double "X"
+    double "Y"
+    double "Z"
+    angle "Pitch"
+    angle "Yaw"
+    int "Data"
+    short "Velocity X"
+    short "Velocity Y"
+    short "Velocity Z"
+}
+
+// bob parser test
+69: {
+    boolean "test"
+    if "test" {
+        byte "testing if"
+    }
+    byte "after if"
+}
+
+// Spawn Experience Orb
+01: {
+    varint "Entity ID"
+    double "X"
+    double "Y"
+    double "Z"
+    short "Count"
+}
+
+// Spawn Living Entity
+02: {
+    varint "Entity ID"
+    uuid "Object UUID"
+    varint "Type"
+    double "X"
+    double "Y"
+    double "Z"
+    angle "Pitch"
+    angle "Yaw"
+    angle "Head Pitch"
+    short "Velocity X"
+    short "Velocity Y"
+    short "Velocity Z"
+}
+
+// Spawn Painting
+03: {
+    varint "Entity ID"
+    uuid "Entity UUID"
+    varint "Motive"
+    position "Location"
+    byte "Direction"
+}
+
+// Spawn Player
+04: {
+    varint "Entity ID"
+    uuid "Player UUID"
+    double "X"
+    double "Y"
+    double "Z"
+    byte "Yaw"
+    byte "Pitch"
+}
+
+// Entity Animation
+05: {
+    varint "Entity ID"
+    byte "Animation"
+}
+
+// Statistics
+06: {
+    varint "Count"
+    array "Count" [
+        varint "Category ID"
+        varint "Statistic ID"
+        varint "Value ID"
+    ]
+}
+
+// Acknowledge Player Digging
+07: {
+    position "Location"
+    varint "Block"
+    varint "Status"
+    boolean "Successful"
+}
+
+// Block Break Animation
+08: {
+    varint "Entity ID"
+    position "Location"
+    byte "Destroy Stage"
+}
+
+// Block Entity Data
+09: {
+    position "Location"
+    byte "Action"
+    nbt "NBT Data"
+}
+
+// Block Action
+0A: {
+    position "Location"
+    byte "Action ID"
+    byte "Action Param"
+    varint "Block Type"
+}
+
+// Block Change
+0B: {
+    position "Location"
+    varint "Block ID"
+}
+
+// Boss Bar
+0C: {
+    uuid "UUID"
+
+    varint "Action"
+    match "Action" {
+        0 => { // add
+            chat "Title"
+            float "Health"
+            varint "Color"
+            varint "Division"
+            byte "Flags"
+        }
+
+        1 => { // remove
+        }
+
+        2 => { // update health
+            float "Health"
+        }
+
+        3 => { // update title
+            chat "Title"
+        }
+
+        4 => { // update style
+            varint "Color"
+            varint "Dividers"
+        }
+
+        5 => { // update flags
+            byte "Flags"
+        }
+    }
+}
+
+// Server Difficulty
+0D: {
+    byte "Difficulty"
+    boolean "Difficulty Locked?"
+}
+
+// Chat Message
+0E: {
+    chat "JSON Data"
+    byte "Position"
+    uuid "Sender"
+}
+
+// Tab-Complete
+// Declare Commands
+// Window Confirmation
+// Close Window
+// Window Items
+// Window Property
+// Set Slot
+// Set Cooldown
+// Plugin Message
+
+// Named Sound Effect
+18: {
+    identifier "Sound Name"
+    varint "Sound Category"
+    int "Effect Position X"
+    int "Effect Position Y"
+    int "Effect Position Z"
+    float "Volume"
+    float "Pitch"
+}
+
+// Disconnect
+// might not be useful to keep
+19: {
+    chat "Reason"
+}
+
+// Entity Status
+1A: {
+    float "X"
+    float "Y"
+    float "Z"
+    float "Strength"
+
+    int "Record Count"
+    array "Record Count" [
+        byte "Record X"
+        byte "Record Y"
+        byte "Record Z"
+    ]
+
+    float "Player Motion X"
+    float "Player Motion Y"
+    float "Player Motion Z"
+}
+
+// Unload Chunk
+// might not be useful to keep
+1C: {
+    int "Chunk X"
+    int "Chunk Z"
+}
+
+// Open Horse Window
+// Keep Alive
+
+// Chunk Data
+20: {
+    int "Chunk X"
+    int "Chunk Z"
+    boolean "Full Chunk"
+    varint "Primary Bit Mask"
+    nbt "Heightmaps"
+
+    if "Full Chunk" {
+        varint "Biomes Length"
+        array "Biomes Length" [
+            varint "Biomes"
+        ]
+    }
+
+    varint "Size"
+    byte["Size"] => "Data"
+
+    varint "Number of block Entities"
+    array "Number of block Entities" [
+        nbt "Block Entities"
+    ]
+}
+
+// Effect
+21: {
+    int "Effect ID"
+    position "Location"
+    int "Data"
+    boolean "Disable Relative Volume"
+}
+
+// Particle
+22: {
+    int "Particle ID"
+    boolean "Long Distance"
+    double "X"
+    double "Y"
+    double "Z"
+    float "Offset X"
+    float "Offset Y"
+    float "Offset Z"
+    float "Particle Data"
+    int "Particle Count"
+
+    match "Particle ID" {
+        3 => {
+            varint "BlockState"
+        }
+        
+        23 => {
+            varint "BlockState"
+        }
+
+        32 => {
+            //slot "Item"
+        }
+    }
+}
+
+// Update Light
+23: {
+    varint "Chunk X"
+    varint "Chunk Z"
+    boolean "Trust Edges"
+
+    varint "Sky Light Mask"
+    varint "Block Light Mask"
+    
+    varint "Empty Sky Light Mask"
+    varint "Empty Block Light Mask"
+
+    varint "SLA Length"
+    byte["SLA Length"] => "SLA Array"
+
+    varint "BLA Length"
+    byte["BLA Length"] => "BLA Array"
+}
+
+// Join Game
+24: {
+    int "Entity ID"
+    boolean "Is Hardcore"
+    byte "Gamemode"
+    byte "Previous Gamemode"
+    
+    varint "World Count"
+    identifier["World Count"] => "World Names"
+
+    nbt "Dimension Codec"
+    nbt "Dimension"
+
+    identifier "World Name"
+    long "Hashed Seed"
+    varint "Max Players"
+    varint "View Distance"
+
+    boolean "Reduced Debug Info"
+    boolean "Enable Respawn Screen"
+    boolean "Is Debug"
+    boolean "Is Flat"
+}
+
+// Map Data
+25: {
+    varint "Map ID"
+    byte "Scale"
+    boolean "Tracking Position"
+    boolean "Locked"
+    
+    varint "Icon Count"
+    array "Icon Count" [
+        varint "Type"
+        byte "X"
+        byte "Z"
+        byte "Direction"
+
+        boolean "Has Display Name"
+        if "Has Display Name" {
+            chat "Display Name"
+        }
+    ]
+
+    byte "Columns"
+    if "Columns" > 0 {
+        byte "Rows"
+        byte "X"
+        byte "Z"
+
+        varint "Length"
+        byte["Length"] => "Data"
+    }
+}

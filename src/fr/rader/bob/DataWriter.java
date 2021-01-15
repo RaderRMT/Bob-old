@@ -1,15 +1,12 @@
 package fr.rader.bob;
 
-import fr.rader.bob.nbt.NBTTagCompound;
-import fr.rader.bob.types.Equipment;
-import fr.rader.bob.types.Position;
-import fr.rader.bob.types.Slot;
-import fr.rader.bob.types.UUID;
+import fr.rader.bob.nbt.NBTCompound;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class DataWriter {
 
@@ -90,13 +87,9 @@ public class DataWriter {
         }
     }
 
-    public void writeUUID(UUID uuid) {
-        writeByteArray(uuid.getRawUUID());
-    }
-
-    public void writeNBT(NBTTagCompound nbt) {
+    public void writeNBT(NBTCompound nbt) {
         if(nbt == null) writeByte(0x00);
-        else writeByteArray(nbt.toByteArray(false));
+        else writeByteArray(nbt.toByteArray());
     }
 
     public byte[] getData() {
@@ -121,28 +114,9 @@ public class DataWriter {
         }
     }
 
-    public void writePosition(Position position) {
-        writeLong(((long) (position.getX() & 0x3FFFFFF) << 38) | ((long) (position.getZ() & 0x3FFFFFF) << 12) | (position.getY() & 0xFFF));
-    }
-
     public void writeChat(String value) {
         writeVarInt(value.length());
         writeString(value);
-    }
-
-    public void writeSlot(Slot slot) {
-        writeBoolean(slot.isPresent());
-
-        if(slot.isPresent()) {
-            writeVarInt(slot.getItemID());
-            writeByte(slot.getItemCount());
-            writeNBT(slot.getNbt());
-        }
-    }
-
-    public void writeEquipment(Equipment equipment) {
-        writeByte(equipment.getSlot());
-        writeSlot(equipment.getItem());
     }
 
     public void writeIdentifier(String identifier) {
@@ -162,5 +136,10 @@ public class DataWriter {
     public void writeVarLongArray(long[] values) {
         for(long value : values)
             writeVarLong(value);
+    }
+
+    public void writeUUID(UUID uuid) {
+        writeLong(uuid.getMostSignificantBits());
+        writeLong(uuid.getLeastSignificantBits());
     }
 }
