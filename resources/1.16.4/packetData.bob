@@ -1,3 +1,9 @@
+//-----------------------------
+// This file is used to tell Bob how a packet
+// is stored and how it should be read.
+// Proper writing about this will be made once Bob is finished.
+//-----------------------------
+
 // Spawn Entity
 00: {
     varint "Entity ID"
@@ -12,15 +18,6 @@
     short "Velocity X"
     short "Velocity Y"
     short "Velocity Z"
-}
-
-// bob parser test
-69: {
-    boolean "test"
-    if "test" {
-        byte "testing if"
-    }
-    byte "after if"
 }
 
 // Spawn Experience Orb
