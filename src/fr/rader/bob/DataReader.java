@@ -3,6 +3,7 @@ package fr.rader.bob;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import fr.rader.bob.nbt.NBTCompound;
+import fr.rader.bob.types.Position;
 
 import java.io.File;
 import java.io.IOException;
@@ -227,5 +228,10 @@ public class DataReader {
     public UUID readUUID() {
         ByteBuffer byteBuffer = ByteBuffer.wrap(readFollowingBytes(16));
         return new UUID(byteBuffer.getLong(), byteBuffer.getLong());
+    }
+
+    public Object readPosition() {
+        long pos = readLong();
+        return new Position((int) (pos >> 38), (int) (pos & 0xfff), (int) (pos << 26 >> 38));
     }
 }

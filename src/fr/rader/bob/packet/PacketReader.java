@@ -4,18 +4,20 @@ import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
 import fr.rader.bob.Main;
 import fr.rader.bob.nbt.NBTCompound;
+import fr.rader.bob.types.Position;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class PacketReader {
 
-    private final int packetID;
-
     private LinkedHashMap<String, Object> properties;
     private LinkedHashMap<String, Object> tempProperties;
-
-    private int lineCounter = 0;
 
     private final String[] reservedWords = {
             "array",
@@ -32,15 +34,18 @@ public class PacketReader {
             "long",
             "float",
             "double",
-            //"string",
-            //"chat",
-            //"identifier",
+            "string",
+            "chat",
+            "identifier",
             "varint",
             "varlong",
             "nbt",
-            //"position",
+            "position",
             "uuid"
     };
+
+    private int lineCounter = 0;
+    private int packetID;
 
     public PacketReader(int packetID) {
         this.packetID = packetID;
@@ -49,19 +54,6 @@ public class PacketReader {
         readProperties(packetID);
 
         System.out.println(properties);
-    }
-
-    public Packet deserializePacket(byte[] rawData) {
-        DataReader reader = new DataReader(rawData);
-        Packet packet = new Packet(packetID);
-        tempProperties = new LinkedHashMap<>();
-
-        // read the properties and build the packet based on the properties
-        packet.setProperties(readMap(properties, reader));
-
-        tempProperties = null;
-
-        return packet;
     }
 
     public byte[] serializePacket(Packet packet) {
@@ -91,10 +83,34 @@ public class PacketReader {
         }
     }
 
-    private LinkedHashMap<String, Object> readMap(LinkedHashMap<String, Object> packetProperties, DataReader reader) {
+    private String getDataType(String key, LinkedHashMap<String, Object> list) {
+        if(list.containsKey(key)) return (String) list.get(key);
+
+        for(Map.Entry<String, Object> property : list.entrySet()) {
+            if(property.getValue() instanceof LinkedHashMap) {
+                String out = getDataType(key, (LinkedHashMap<String, Object>) property.getValue());
+                if(out != null) return out;
+            }
+        }
+
+        return null;
+    }
+
+    public Packet deserializePacket(byte[] rawData) {
+        DataReader reader = new DataReader(rawData);
+        Packet packet = new Packet(packetID);
+        tempProperties = new LinkedHashMap<>();
+
+        packet.setProperties(readMap(properties, reader));
+
+        tempProperties = null;
+        return packet;
+    }
+
+    private LinkedHashMap<String, Object> readMap(LinkedHashMap<String, Object> properties, DataReader reader) {
         LinkedHashMap<String, Object> out = new LinkedHashMap<>();
 
-        for(Map.Entry<String, Object> property : packetProperties.entrySet()) {
+        for(Map.Entry<String, Object> property : properties.entrySet()) {
             if(property.getValue() instanceof LinkedHashMap) {
                 String key = property.getKey();
                 switch(key.split("_")[1]) {
@@ -171,7 +187,7 @@ public class PacketReader {
 
     private Object[] fillArray(String type, String varName, DataReader reader) {
         int length;
-        if(isVariableType(varName)) {
+        if(isType(varName)) {
             length = (int) getData(varName, reader);
         } else {
             length = (int) tempProperties.get(varName);
@@ -186,25 +202,31 @@ public class PacketReader {
     }
 
     private void readProperties(int packetID) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(Main.class.getResourceAsStream("/1.16.4/packetData.bob")));
+        InputStream inputStream = Main.class.getResourceAsStream("/1.16.4/packetData.bob");
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        BufferedReader reader = new BufferedReader(inputStreamReader);
 
         try {
             String line;
             while((line = reader.readLine()) != null) {
                 lineCounter++;
 
-                // we remove comments here
+                // remove comments
                 line = line.split("//")[0].trim();
 
-                // we skip the current line if it's empty
+                // we continue if line is empty
                 if(line.isEmpty()) continue;
 
-                // we go to the line that contains the correct packet data
+                // if we're starting to read a packet data
                 if(line.matches("[0-9A-F]+: ?\\{") && line.startsWith(String.format("%1$02X", packetID))) {
                     properties = readUntil(reader, "}");
-                    return;
+                    break;
                 }
             }
+
+            reader.close();
+            inputStreamReader.close();
+            inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -218,34 +240,27 @@ public class PacketReader {
             while((line = reader.readLine()) != null) {
                 lineCounter++;
 
-                // we remove comments and trim the line
+                // remove comments
                 line = line.split("//")[0].trim();
 
-                // we skip the current line if it's empty
+                // we continue if line is empty
                 if(line.isEmpty()) continue;
 
-                // we return if we met the end character
                 if(line.contains(endCharacter)) return out;
 
-                if(line.contains("*") || line.contains("_")) throw new IllegalStateException("Line " + lineCounter + " contains illegal characters (* or _), remove them and try again. Line: " + line);
+                if(line.contains("*") || line.contains("_")) stop(line);
 
                 if(startWithReservedWord(line)) {
                     String key;
                     if(line.contains("\"")) {
                         key = line.split("\"")[1];
-                        if(!properties.containsKey(key)) {
-                            System.out.println("[Error]: \"" + key + "\" does not exist! Line " + lineCounter + ": " + line);
-                            System.exit(-1);
-                        }
+                        if(!properties.containsKey(key)) stop(line);
                     } else {
                         key = line.substring(6, line.length() - 2);
-                        if(!isVariableType(key)) {
-                            System.out.println("[Error]: \"" + key + "\" is not a variable type! Line " + lineCounter + ": " + line);
-                            System.exit(-1);
-                        }
+                        if(!isType(key)) stop(line);
                     }
 
-                    switch(getReservedWord(line)) {
+                    switch(line.split(" ")[0]) { // reserved word
                         case "array":
                             out.put("_array_" + key, readUntil(reader, "]"));
                             break;
@@ -253,22 +268,62 @@ public class PacketReader {
                             out.put("_match_" + key, readUntil(reader, "}"));
                             break;
                         case "if":
-                            parseIf(line, out, reader);
+                            String name;
+
+                            if(line.matches("if( not)? \"[\\w\\d ]+\" \\{")) {
+                                String variable = line.split("\"")[1];
+                                if(!properties.get(variable).equals("boolean")) stop(line);
+
+                                name = "_if_" + variable + "_equals_" + ((line.contains("not") ? "false" : "true"));
+                                out.put(name, readUntil(reader, "}"));
+                            } else if(line.matches("if \"[\\w\\d ]+\" [=><]{1,2} \\d+ \\{")) {
+                                String comparingType = line.split("if \"[\\w\\d ]+\"")[1].trim().split(" ")[0];
+                                if(!isComparingTypeValid(comparingType)) stop(line);
+
+                                String variable = line.split("\"")[1];
+                                if(!properties.containsKey(variable)
+                                        || !isNumber((String) properties.get(variable))) stop(line);
+
+                                String number = line.split("if \"[\\w\\d ]+\" [=><]{1,2}")[1].trim().split(" ")[0];
+                                name = "_if_" + variable + "_" + comparingType + "_" + number;
+                                out.put(name, readUntil(reader, "}"));
+                            } else stop(line);
                             break;
                         default:
-                            throw new IllegalStateException("Unexpected reserved word " + getReservedWord(line) + " at line " + lineCounter + ": " + line);
+                            stop(line);
                     }
-                } else if(line.matches("\\d+ => \\{")) {
+                } else if(line.matches("\\d+ => \\{")) { // one line array
                     out.put(line.split(" ")[0], readUntil(reader, "}"));
-                } else if(line.matches("\\w+\\[\"?[\\w\\d ]+\"?] => \"?[\\w\\d ]+\"?")) {
-                    parseArray(line, out);
+                } else if(line.matches("\\w+\\[\"?[\\w\\d ]+\"?] => \"?[\\w\\d ]+\"?")) { // match conditions
+                    String type = line.split("\\[")[0];
+                    if(!isType(type)) stop(line);
+
+                    String var;
+                    String key;
+                    switch(countChar(line, '"')) {
+                        case 2:
+                            var = line.split("\"")[1];
+                            if(!properties.containsKey(var)) stop(line);
+
+                            key = line.split("\"")[3];
+                            out.put(key, "*array_" + type + "_" + var);
+                            break;
+                        case 4:
+                            var = line.split("]")[0].split("\\[")[1];
+                            if(!isType(var)) stop(line);
+
+                            key = line.split("\"")[1];
+                            out.put(key, "*array_" + type + "_" + var);
+                            break;
+                        default:
+                            stop(line);
+                    }
                 } else {
                     if(startWithType(line)) {
                         String key = line.split("\"")[1];
-
                         out.put(key, line.split(" ")[0]);
                         properties.put(key, line.split(" ")[0]);
-                    }
+                    } else System.out.println("Skipping line " + lineCounter + " (bad): " + line);
                 }
             }
         } catch (IOException e) {
@@ -278,48 +333,38 @@ public class PacketReader {
         return out;
     }
 
-    private void parseArray(String line, LinkedHashMap<String, Object> parentList) {
-        int chars = countChar(line, '"');
-        String type = line.split("\\[")[0];
-        if(!isVariableType(type)) throw new IllegalStateException("Type is not a valid type! Line " + lineCounter + ": " + line);
+    private boolean startWithType(String line) {
+        for(String type : types) {
+            if(line.startsWith(type)) return true;
+        }
 
-        if(chars == 4) {
-            String var = line.split("\"")[1];
-            if(!properties.containsKey(var)) throw new IllegalStateException("Variable " + var + " is not declared! Line " + lineCounter + ": " + line);
-
-            String key = line.split("\"")[3];
-            parentList.put(key, "*array_" + type + "_" + var);
-        } else if(chars == 2) {
-            String var = line.split("]")[0].split("\\[")[1];
-            if(!isVariableType(var)) throw new IllegalStateException("Type (for length) is not a valid type! Line " + lineCounter + ": " + line);
-
-            String key = line.split("\"")[1];
-            parentList.put(key, "*array_" + type + "_" + var);
-        } else throw new IllegalStateException("Invalid quotes at line " + lineCounter + ": " + line);
+        return false;
     }
 
-    private void parseIf(String line, LinkedHashMap<String, Object> parentList, BufferedReader reader) {
-        String name = "_if";
+    private boolean startWithReservedWord(String line) {
+        for(String reservedWord : reservedWords) {
+            if(line.startsWith(reservedWord)) return true;
+        }
 
-        if(line.matches("if( not)? \"[\\w\\d ]+\" \\{")) {
-            String variable = line.split("\"")[1];
-            if(!properties.get(variable).equals("boolean")) throw new IllegalStateException(variable + " must be a boolean! Line " + lineCounter + ": " + line);
+        return false;
+    }
 
-            name += "_" + variable + "_equals_" + ((line.contains("not") ? "false" : "true"));
-            parentList.put(name, readUntil(reader, "}"));
-        } else if(line.matches("if \"[\\w\\d ]+\" [=><]{1,2} \\d+ \\{")) {
-            String comparingType = line.split("if \"[\\w\\d ]+\"")[1].trim().split(" ")[0];
-            if(!isComparingTypeValid(comparingType)) throw new IllegalStateException("Illegal comparing " + comparingType + " at line " + lineCounter + ": " + line);
+    private boolean isType(String string) {
+        for(String type : types) {
+            if(string.equals(type)) return true;
+        }
 
-            String variable = line.split("\"")[1];
-            if(!properties.containsKey(variable)) throw new IllegalStateException("Variable " + variable + " is not declared! Line " + lineCounter + ": " + line);
-            if(!isNumber((String) properties.get(variable))) throw new IllegalStateException("Variable " + variable + " must be a number! Line " + lineCounter + ": " + line);
+        return false;
+    }
 
-            String number = line.split("if \"[\\w\\d ]+\" [=><]{1,2}")[1].trim().split(" ")[0];
+    private int countChar(String str, char c) {
+        int count = 0;
 
-            name += "_" + variable + "_" + comparingType + "_" + number;
-            parentList.put(name, readUntil(reader, "}"));
-        } else throw new IllegalStateException("Malformed condition at line " + lineCounter + ": " + line);
+        for(int i=0; i < str.length(); i++) {
+            if(str.charAt(i) == c) count++;
+        }
+
+        return count;
     }
 
     private boolean isNumber(String type) {
@@ -342,65 +387,6 @@ public class PacketReader {
                 || comparingType.equals(">=");
     }
 
-    private int countChar(String str, char c) {
-        int count = 0;
-
-        for(int i=0; i < str.length(); i++) {
-            if(str.charAt(i) == c) count++;
-        }
-
-        return count;
-    }
-
-    private boolean startWithReservedWord(String line) {
-        for(String reservedWord : reservedWords) {
-            if(line.startsWith(reservedWord)) return true;
-        }
-
-        return false;
-    }
-
-    private boolean startWithType(String line) {
-        for(String type : types) {
-            if(line.startsWith(type)) return true;
-        }
-
-        return false;
-    }
-
-    private String getReservedWord(String line) {
-        return line.split(" ")[0];
-    }
-
-    private boolean isReservedWord(String word) {
-        for(String reservedWord : reservedWords) {
-            if(reservedWord.equals(word)) return true;
-        }
-
-        return false;
-    }
-
-    private boolean isVariableType(String word) {
-        for(String type : types) {
-            if(type.equals(word)) return true;
-        }
-
-        return false;
-    }
-
-    private String getDataType(String key, LinkedHashMap<String, Object> list) {
-        if(list.containsKey(key)) return (String) list.get(key);
-
-        for(Map.Entry<String, Object> property : list.entrySet()) {
-            if(property.getValue() instanceof LinkedHashMap) {
-                String out = getDataType(key, (LinkedHashMap<String, Object>) property.getValue());
-                if(out != null) return out;
-            }
-        }
-
-        return null;
-    }
-
     private Object getData(String type, DataReader reader) {
         switch(type) {
             case "boolean": return reader.readBoolean();
@@ -411,13 +397,13 @@ public class PacketReader {
             case "long": return reader.readLong();
             case "float": return reader.readFloat();
             case "double": return reader.readDouble();
-            //case "string": return reader.readString(reader.readShort());
-            //case "chat": return reader.readJSON();
-            //case "identifier": return reader.readString(reader.readShort());
+            case "chat":
+            case "identifier":
+            case "string": return reader.readString(reader.readVarInt());
             case "varint": return reader.readVarInt();
             case "varlong": return reader.readVarLong();
             case "nbt": return reader.readNBT();
-            //case "position": return reader.readPosition();
+            case "position": return reader.readPosition();
             case "uuid": return reader.readUUID();
         }
 
@@ -434,14 +420,25 @@ public class PacketReader {
             case "long": writer.writeLong((Long) object); break;
             case "float": writer.writeFloat((Float) object); break;
             case "double": writer.writeDouble((Double) object); break;
-            //case "string": writer.writeString(writer.writeShort()); break;
-            //case "chat": writer.writeJSON(); break;
-            //case "identifier": writer.writeString(writer.writeShort()); break;
+            case "chat":
+            case "identifier":
+            case "string":
+                writer.writeVarInt(((String) object).length());
+                writer.writeString((String) object);
+                break;
             case "varint": writer.writeVarInt((Integer) object); break;
             case "varlong": writer.writeVarLong((Long) object); break;
             case "nbt": writer.writeNBT((NBTCompound) object); break;
-            //case "position": writer.writePosition(); break;
+            case "position": writer.writePosition((Position) object); break;
             case "uuid": writer.writeUUID((UUID) object); break;
         }
+    }
+
+    private void stop(String line) {
+        throw new IllegalStateException("Error at line " + lineCounter + ": " + line);
+    }
+
+    public LinkedHashMap<String, Object> getProperties() {
+        return properties;
     }
 }

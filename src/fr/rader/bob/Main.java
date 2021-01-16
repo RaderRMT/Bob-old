@@ -48,7 +48,8 @@ public class Main {
         File project = new File(BobSettings.getWorkingDirectory() + "/projects/" + projectName);
 
         ReplayData data = new ReplayData(project);
-        new MainInterface(data).createWindow();
+        MainInterface mainInterface = new MainInterface(data);
+        mainInterface.createWindow();
 
         //System.out.println(project.getAbsolutePath());
     }
@@ -83,9 +84,9 @@ public class Main {
         System.out.println(Arrays.toString(out));
         System.out.println("test: " + (Arrays.equals(out, writer.getData())));*/
 
-        //new PacketReader(0x25);
+        //new PacketReader(0x32);
 
-        //start();
+        start();
     }
 
     public BobSettings getSettings() {

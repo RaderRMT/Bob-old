@@ -1,6 +1,7 @@
 package fr.rader.bob;
 
 import fr.rader.bob.nbt.NBTCompound;
+import fr.rader.bob.types.Position;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -141,5 +142,9 @@ public class DataWriter {
     public void writeUUID(UUID uuid) {
         writeLong(uuid.getMostSignificantBits());
         writeLong(uuid.getLeastSignificantBits());
+    }
+
+    public void writePosition(Position position) {
+        writeLong(((long) (position.getX() & 0x3FFFFFF) << 38) | ((long) (position.getZ() & 0x3FFFFFF) << 12) | (position.getY() & 0xFFF));
     }
 }

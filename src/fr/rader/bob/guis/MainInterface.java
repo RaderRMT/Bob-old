@@ -90,11 +90,6 @@ public class MainInterface {
         for(Map.Entry<String, Object> element : map.entrySet()) {
             if(element.getValue() instanceof LinkedHashMap) {
                 String name = element.getKey();
-                if(name.contains("_")) {
-                    // todo:
-                    //  ajust this for other names than if
-                    name = "If \"" + name.split("_")[2] + "\" " + name.split("_")[3] + " " + name.split("_")[4];
-                }
 
                 currentNode.add(buildTree((LinkedHashMap<String, Object>) element.getValue(), name));
             } else if(element.getValue() instanceof Object[]) {
@@ -189,12 +184,16 @@ class MenuBarListener implements ActionListener {
                 main.start();
                 break;
             case "test":
-                PacketReader packetReader = new PacketReader(0x69);
+                PacketReader packetReader = new PacketReader(0x06);
 
                 DataWriter writer = new DataWriter();
-                writer.writeBoolean(true);
-                writer.writeByte(5);
-                writer.writeByte(10);
+                writer.writeVarInt(2);
+                writer.writeVarInt(5);
+                writer.writeVarInt(10);
+                writer.writeVarInt(15);
+                writer.writeVarInt(105);
+                writer.writeVarInt(110);
+                writer.writeVarInt(115);
 
                 Packet packet = packetReader.deserializePacket(writer.getData());
                 MainInterface.getInstance().showPacketData(packet);

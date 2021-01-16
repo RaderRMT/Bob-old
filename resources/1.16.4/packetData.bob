@@ -232,18 +232,20 @@
 
     if "Full Chunk" {
         varint "Biomes Length"
-        array "Biomes Length" [
-            varint "Biomes"
-        ]
+        varint["Biomes Length"] => "Biomes"
+        //array "Biomes Length" [
+        //    varint "Biomes"
+        //]
     }
 
     varint "Size"
     byte["Size"] => "Data"
 
     varint "Number of block Entities"
-    array "Number of block Entities" [
-        nbt "Block Entities"
-    ]
+    nbt["Number of block Entities"] => "Block Entities"
+    //array "Number of block Entities" [
+    //    nbt "Block Entities"
+    //]
 }
 
 // Effect
@@ -354,4 +356,57 @@
         varint "Length"
         byte["Length"] => "Data"
     }
+}
+
+// Player Info
+32: {
+    varint "Action"
+
+    varint "Number of Players"
+    array "Number of Players" [
+        uuid "UUID"
+        match "Action" {
+            0 => { // add player
+                string "Name" // todo
+
+                varint "Number of Properties"
+                array "Number of Properties" [
+                    string "Name"
+                    string "Value"
+
+                    boolean "Is Signed"
+                    if "Is Signed" {
+                        string "Signature"
+                    }
+                ]
+
+                varint "Gamemode"
+                varint "Ping"
+
+                boolean "Has Display Name"
+                if "Has Display Name" {
+                    chat "Display Name"
+                }
+            }
+
+            1 => { // update gamemode
+                varint "Gamemode"
+            }
+
+            2 => { // update latency
+                varint "Ping"
+            }
+
+            3 => { // update display name
+                boolean "Has Display Name"
+                if "Has Display Name" {
+                    chat "Display Name"
+                }
+            }
+
+            //4 => { // remove player (has no fields)
+            //    
+            //}
+        }
+    ]
 }
