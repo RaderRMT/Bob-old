@@ -2,6 +2,7 @@
 // This file is used to tell Bob how a packet
 // is stored and how it should be read.
 // Proper writing about this will be made once Bob is finished.
+// It will allow you to implement your own custom packets.
 //-----------------------------
 
 // Spawn Entity
@@ -18,6 +19,33 @@
     short "Velocity X"
     short "Velocity Y"
     short "Velocity Z"
+}
+
+69: {
+    int "value"
+    match "value" {
+        0 => {
+            int "test match 0"
+        }
+
+        3 => {
+            int "test match 0"
+        }
+
+        5 => {
+            int "test match 5"
+        }
+    }
+
+    array "value" [
+        int "test array"
+    ]
+
+    if "value" == 3 {
+        int "test if"
+    }
+    
+    int["value"] => "test one line array"
 }
 
 // Spawn Experience Orb
@@ -131,8 +159,8 @@
             byte "Flags"
         }
 
-        1 => { // remove
-        }
+        //1 => { // remove
+        //}
 
         2 => { // update health
             float "Health"
@@ -195,6 +223,12 @@
 
 // Entity Status
 1A: {
+    int "Entity ID"
+    byte "Entity Status"
+}
+
+// Explosion
+1B: {
     float "X"
     float "Y"
     float "Z"
@@ -279,7 +313,12 @@
         }
 
         32 => {
-            //slot "Item"
+            boolean "Present"
+            if "Present" {
+                varint "Item ID"
+                byte "Item Count"
+                nbt "NBT"
+            }
         }
     }
 }
@@ -358,6 +397,82 @@
     }
 }
 
+// Trade List
+
+// Entity Position
+27: {
+    varint "Entity ID"
+    short "Delta X"
+    short "Delta Y"
+    short "Delta Z"
+    boolean "On Ground"
+}
+
+// Entity Position and Rotation
+28: {
+    varint "Entity ID"
+    short "Delta X"
+    short "Delta Y"
+    short "Delta Z"
+    angle "Yaw"
+    angle "Pitch"
+    boolean "On Ground"
+}
+
+// Entity Rotation
+29: {
+    varint "Entity ID"
+    angle "Yaw"
+    angle "Pitch"
+    boolean "On Ground"
+}
+
+// Entity Movement
+2A: {
+    varint "Entity ID"
+}
+
+// Vehicle Move
+2B: {
+    double "X"
+    double "Y"
+    double "Z"
+    float "Yaw"
+    float "Pitch"
+}
+
+// Open Book
+// Open Window
+// Open Sign Editor
+// Craft Recipe Response
+
+// Player Abilities
+30: {
+    byte "Flags"
+    float "Flying Speed"
+    float "Field of View Modifier"
+}
+
+// Combat Event
+31: {
+    varint "Event"
+    match "Event" {
+        //0 => { // enter combat (no fields)
+        //}
+
+        1 => { // end combat
+            varint "Duration"
+            int "Entity ID"
+        }
+        
+        2 => { // entity dead
+            varint "Player ID"
+            int "Entity ID"
+            chat "Message"
+        }
+    }
+}
+
 // Player Info
 32: {
     varint "Action"
@@ -367,7 +482,7 @@
         uuid "UUID"
         match "Action" {
             0 => { // add player
-                string "Name" // todo
+                string "Name"
 
                 varint "Number of Properties"
                 array "Number of Properties" [
@@ -410,3 +525,250 @@
         }
     ]
 }
+
+// Face Player
+33: {
+    varint "Feet/eyes" // feet=0, eyes=1
+    double "Target X"
+    double "Target Y"
+    double "Target Z"
+
+    boolean "Is Entity"
+    if "Is Entity" {
+        varint "Entity ID"
+        varint "Entity feet/eyes"
+    }
+}
+
+// Player Position and Look
+34: {
+    double "X"
+    double "Y"
+    double "Z"
+    float "Yaw"
+    float "Pitch"
+    byte "Flags"
+    varint "Teleport ID"
+}
+
+// Unlock Recipes
+
+// Destroy Entities
+36: {
+    varint "Count"
+    varint["Count"] => "Entity IDs"
+}
+
+// Remove Entity Effect
+37: {
+    varint "Entity ID"
+    byte "Effect ID"
+}
+
+// Resource Pack Send
+38: {
+    string "URL"
+    string "Hash"
+}
+
+// Respawn
+39: {
+    nbt "Dimension"
+    identifier "World Name"
+    long "Hashed Seed"
+    byte "Gamemode"
+    byte "Previous Gamemode"
+    boolean "Is Debug"
+    boolean "Is Flat"
+    boolean "Copy Metadata"
+}
+
+// Entity Head Look
+3A: {
+    varint "Entity ID"
+    angle "Head Yaw"
+}
+
+// Multi Block Change
+3B: {
+    long "Chunk Section Position"
+    boolean "Inverse Trust Edge"
+    varint "Blocks Array Size"
+    varlong["Blocks Array Size"] => "Blocks"
+}
+
+// Select Advancement Tab
+
+// World Border
+3D: {
+    varint "Action"
+    match "Action" {
+        0 => {  // set size
+            double "Diameter"
+        }
+
+        1 => { // lerp size
+            double "Old Diameter"
+            double "New Diameter"
+            varlong "Speed"
+        }
+
+        2 => { // set center
+            double "X"
+            double "Z"
+        }
+
+        3 => { // initialize
+            double "X"
+            double "Z"
+            double "Old Diameter"
+            double "New Diameter"
+            varlong "Speed"
+            varint "Portal Teleport Boundary"
+            varint "Warning Blocks"
+            varint "Warning Time"
+        }
+
+        4 => { // set warning time
+            varint "Warning Time"
+        }
+
+        5 => { // set warning blocks
+            varint "Warning Blocks"
+        }
+    }
+}
+
+// Camera
+
+// Held Item Change
+3F: {
+    byte "Slot"
+}
+
+// Update View Position
+40: {
+    varint "Chunk X"
+    varint "Chunk Z"
+}
+
+// Update View Distance
+41: {
+    varint "View Distance"
+}
+
+// Spawn Position
+// Display Scoreboard
+
+// Entity Metadata
+//44: {
+//    varint "Entity ID"
+//
+//    byte "Index"
+//    if "Index" <= 255 {
+//        // todo
+//    }
+//}
+
+// Attach Entity 
+45: {
+    int "Attached Entity ID"
+    int "Holding Entity ID"
+}
+
+// Entity Velocity
+46: {
+    varint "Entity ID"
+    short "Velocity X"
+    short "Velocity Y"
+    short "Velocity Z"
+}
+
+// Entity Equipment
+//47: {
+//    varint "Entity ID"
+//    // todo: implement do while loops for that
+//
+//    //byte "Slot"
+//    //boolean "Present"
+//    //if "Present" {
+//    //    varint "Item ID"
+//    //    byte "Item Count"
+//    //    nbt "NBT"
+//    //}
+//}
+
+// Set Experience
+// Update Health
+// Scoreboard Objective
+
+// Set Passengers
+4B: {
+    varint "Entity ID"
+    varint "Passenger Count"
+    varint["Passenger Count"] => "Passengers"
+}
+
+// Teams
+// Update Score
+
+// Time Update
+4E: {
+    long "World Age"
+    long "Time of day"
+}
+
+// Title
+// Entity Sound Effect
+// Sound Effect
+// Stop Sound
+// Player List Header and Footer
+// NBT Query Response
+
+// Collect Item
+54: {
+    varint "Collected Entity ID"
+    varint "Collector Entity ID"
+    varint "Pickup Item Count"
+}
+
+// Entity Teleport
+56: {
+    varint "Entity ID"
+    double "X"
+    double "Y"
+    double "Z"
+    angle "Yaw"
+    angle "Pitch"
+    boolean "On Ground"
+}
+
+// Advancements
+
+// Entity Properties
+58: {
+    varint "Entity ID"
+    int "Number of Properties"
+    array "Number of Properties" [
+        identifier "Key"
+        double "Value"
+        varint "Number of Modifiers"
+        array "Number of Modifiers" [
+            uuid "UUID"
+            double "Amount"
+            byte "Operation"
+        ]
+    ]
+}
+
+// Entity Effect
+59: {
+    varint "Entity ID"
+    byte "Effect ID"
+    byte "Amplifier"
+    varint "Duration"
+    byte "Flags"
+}
+
+// Declare Recipes
+// Tags

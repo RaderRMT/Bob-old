@@ -2,20 +2,15 @@ package fr.rader.bob;
 
 import fr.rader.bob.guis.MainInterface;
 import fr.rader.bob.guis.ProjectSelector;
-import fr.rader.bob.packet.Packet;
-import fr.rader.bob.packet.PacketReader;
 
 import javax.swing.*;
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.UUID;
 
 public class Main {
 
     private static Main instance;
 
+    private ReplayData replayData;
     private BobSettings settings;
     private Projects projects;
 
@@ -47,11 +42,82 @@ public class Main {
 
         File project = new File(BobSettings.getWorkingDirectory() + "/projects/" + projectName);
 
-        ReplayData data = new ReplayData(project);
-        MainInterface mainInterface = new MainInterface(data);
+        replayData = new ReplayData(project);
+        MainInterface mainInterface = new MainInterface();
         mainInterface.createWindow();
 
-        //System.out.println(project.getAbsolutePath());
+        /*DataWriter writer = new DataWriter();
+        writer.writeInt(2);
+
+        writer.writeInt(1);
+        writer.writeInt(2);
+        writer.writeInt(3);
+        writer.writeInt(4);
+        writer.writeInt(5);
+        writer.writeInt(6);
+        writer.writeInt(7);
+        writer.writeInt(8);
+
+        Packet packet = new Packet(writer.getData(), 0x69);
+        PacketReader packetReader = new PacketReader(packet.getPacketID());
+        packetReader.readPacket(packet);
+        byte[] rawData = packetReader.serializePacket(packet);
+
+        System.out.println(Arrays.equals(rawData, writer.getData()));*/
+
+        /*List<Packet> packetList = new ArrayList<>();
+        HashMap<Integer, PacketReader> readerHashMap = new HashMap<>();
+
+        int packetCounter = 1;
+
+        DataWriter writer = new DataWriter();
+        try {
+            DataReader reader = new DataReader(Files.readAllBytes(replayData.getRecording().toPath()));
+
+            writer.writeInt(reader.readInt());
+            int len = reader.readInt();
+            writer.writeInt(len);
+            writer.writeByteArray(reader.readFollowingBytes(len));
+
+            do {
+                packetCounter++;
+                int timestamp = reader.readInt();
+                int size = reader.readInt();
+                int packetID = reader.readVarInt();
+
+                if(!readerHashMap.containsKey(packetID)) readerHashMap.put(packetID, new PacketReader(packetID));
+
+                Packet packet = new Packet(reader.readFollowingBytes(size - 1), packetID);
+                packet.setTimestamp(timestamp);
+
+                packetList.add(packet);
+            } while(reader.getOffset() != reader.getDataLength());
+
+            System.out.println(packetCounter + ", " + packetList.size());
+
+            packetCounter = 0;
+            for(Packet packet : packetList) {
+                packetCounter++;
+
+                //System.out.println(packet);
+
+                writer.writeInt(packet.getTimestamp());
+                writer.writeInt(packet.getRawData().length + 1);
+                writer.writeVarInt(packet.getPacketID());
+                writer.writeByteArray(packet.getRawData());
+            }
+
+            System.out.println(Arrays.equals(writer.getData(), Files.readAllBytes(replayData.getRecording().toPath())));
+
+            OutputStream outputStream = new FileOutputStream("C:/Users/marti/Desktop/test.bin");
+
+            outputStream.write(writer.getData());
+
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
     }
 
     public static void main(String[] args) {
@@ -67,25 +133,6 @@ public class Main {
             e.printStackTrace();
         }
 
-        /*PacketReader packetReader = new PacketReader(0x0c);
-
-        DataWriter writer = new DataWriter();
-
-        writer.writeUUID(UUID.randomUUID());
-        writer.writeVarInt(2);
-        writer.writeFloat(20f);
-
-        System.out.println(Arrays.toString(writer.getData()));
-
-        Packet packet = packetReader.deserializePacket(writer.getData());
-
-        byte[] out = packetReader.serializePacket(packet);
-
-        System.out.println(Arrays.toString(out));
-        System.out.println("test: " + (Arrays.equals(out, writer.getData())));*/
-
-        //new PacketReader(0x32);
-
         start();
     }
 
@@ -95,5 +142,9 @@ public class Main {
 
     public Projects getProjects() {
         return projects;
+    }
+
+    public ReplayData getReplayData() {
+        return replayData;
     }
 }

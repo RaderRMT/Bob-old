@@ -1,41 +1,32 @@
 package fr.rader.bob.packet;
 
-import java.util.LinkedHashMap;
+import java.util.Arrays;
 
 public class Packet {
 
-    private LinkedHashMap<String, Object> properties;
-    private int packetID;
+    private final byte[] rawData;
+    private final int packetID;
 
-    public Packet(int packetID) {
+    private int timestamp;
+
+    public Packet(byte[] rawData, int packetID) {
+        this.rawData = rawData;
         this.packetID = packetID;
-        properties = new LinkedHashMap<>();
     }
 
     public int getPacketID() {
         return packetID;
     }
 
-    public void setProperties(LinkedHashMap<String, Object> properties) {
-        this.properties = properties;
+    public byte[] getRawData() {
+        return rawData;
     }
 
-    public LinkedHashMap<String, Object> getProperties() {
-        return properties;
+    public void setTimestamp(int timestamp) {
+        this.timestamp = timestamp;
     }
 
-    public void addProperty(String name, Object value) {
-        properties.put(name, value);
-    }
-
-    public Object getProperty(String name) {
-        return properties.get(name);
-    }
-
-    @Override
-    public String toString() {
-        return "Packet{" +
-                "properties=" + properties +
-                '}';
+    public int getTimestamp() {
+        return timestamp;
     }
 }

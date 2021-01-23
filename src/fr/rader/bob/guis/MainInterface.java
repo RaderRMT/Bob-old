@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -42,9 +43,9 @@ public class MainInterface {
 
     public Canvas engineCanvas = new Canvas();
 
-    public MainInterface(ReplayData replayData) {
+    public MainInterface() {
         instance = this;
-        this.replayData = replayData;
+        this.replayData = Main.getInstance().getReplayData();
 
         preferences = new File(replayData.getProject().getAbsolutePath() + "/preferences.nbt");
         NBTCompound nbt;
@@ -72,12 +73,12 @@ public class MainInterface {
         horizontalSplit.setLeftComponent(engineCanvas);
     }
 
-    public void showPacketData(Packet packet) {
+    public void showPacketData(LinkedHashMap<String, Object> packetData) {
         root.removeAllChildren();
 
-        root.add(buildTree(packet.getProperties(), null));
+        root.add(buildTree(packetData, null));
 
-        root.setUserObject("Packet " + String.format("%1$02X", packet.getPacketID()));
+        //root.setUserObject("Packet " + String.format("%1$02X", packet.getPacketID()));
 
         treeModel.reload();
     }
@@ -184,19 +185,20 @@ class MenuBarListener implements ActionListener {
                 main.start();
                 break;
             case "test":
-                PacketReader packetReader = new PacketReader(0x06);
-
                 DataWriter writer = new DataWriter();
                 writer.writeVarInt(2);
-                writer.writeVarInt(5);
-                writer.writeVarInt(10);
-                writer.writeVarInt(15);
-                writer.writeVarInt(105);
-                writer.writeVarInt(110);
-                writer.writeVarInt(115);
 
-                Packet packet = packetReader.deserializePacket(writer.getData());
-                MainInterface.getInstance().showPacketData(packet);
+                writer.writeVarInt(1);
+                writer.writeVarInt(2);
+                writer.writeVarInt(3);
+                writer.writeVarInt(4);
+                writer.writeVarInt(5);
+                writer.writeVarInt(6);
+
+                Packet packet = new Packet(writer.getData(), 0x06);
+                PacketReader packetReader = new PacketReader(packet.getPacketID());
+
+                MainInterface.getInstance().showPacketData(packetReader.readPacket(packet));
                 break;
         }
     }
