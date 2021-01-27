@@ -21,8 +21,6 @@ public class ReplayData {
 
     private boolean alreadyHasReplay = false;
 
-    private final int[] firstPackets = { 0x02, 0x24 };
-
     public ReplayData(File project) {
         this.project = project;
 
@@ -80,32 +78,23 @@ public class ReplayData {
     }
 
     private void checkBadlion() {
-        if(new File(project.getAbsolutePath() + "/files/badlion.json").exists()) stopBob("badlion");
-        if(!new File(project.getAbsolutePath() + "/files/mods.json").exists()) stopBob("mods");
-        if(!new File(project.getAbsolutePath() + "/files/recording.tmcpr.crc32").exists()) stopBob("crc");
-        if(!metaData.containsKey("serverName")) stopBob("If you did not use Badlion's ReplayMod, please update your ReplayMod to the latest version");
-        if(!((String) metaData.get("generator")).startsWith("ReplayMod")) stopBob("generator");
+        if(new File(project.getAbsolutePath() + "/files/badlion.json").exists()) stopBob();
+        if(!new File(project.getAbsolutePath() + "/files/mods.json").exists()) stopBob();
+        if(!new File(project.getAbsolutePath() + "/files/recording.tmcpr.crc32").exists()) stopBob();
+        if(!metaData.containsKey("serverName")) stopBob();
+        if(!((String) metaData.get("generator")).startsWith("ReplayMod")) stopBob();
 
         try {
             DataReader reader = new DataReader(Files.readAllBytes(getRecording().toPath()));
-            for(int id : firstPackets) {
-                reader.readInt();
-                int length = reader.readInt();
-                if(reader.readVarInt() != id) stopBob("varint");
-                reader.readFollowingBytes(length - 1);
-            }
+            reader.readLong();
+            if(reader.readVarInt() != 0x02) stopBob();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void stopBob() {
-        stopBob("");
-    }
-
-    private void stopBob(String message) {
-        if(!message.isEmpty()) message = "\n" + message;
-        JOptionPane.showMessageDialog(null, "Badlion Replay detected, stopping Bob.\nPlease use the official ReplayMod." + message);
+        JOptionPane.showMessageDialog(null, "Badlion Replay detected, stopping Bob.\nPlease use the official ReplayMod.");
 
         // clear last opened project and delete files
         Main main = Main.getInstance();
