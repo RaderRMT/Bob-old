@@ -1,4 +1,4 @@
-package fr.rader.bob.nbt;
+package fr.rader.bob.nbt.tags;
 
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
@@ -30,6 +30,10 @@ public class NBTList extends NBTBase {
         readData(reader);
     }
 
+    public NBTList(int tagID) {
+        this.tagID = tagID;
+    }
+
     private void readData(DataReader reader) {
         tagID = reader.readByte();
 
@@ -37,28 +41,28 @@ public class NBTList extends NBTBase {
         for(int i = 0; i < length; i++) {
             switch(tagID) {
                 case 1:
-                    addByte(reader.readByte());
+                    addByte(new NBTByte(reader.readByte()));
                     break;
                 case 2:
-                    addShort(reader.readShort());
+                    addShort(new NBTShort(reader.readShort()));
                     break;
                 case 3:
-                    addInt(reader.readInt());
+                    addInt(new NBTInt(reader.readInt()));
                     break;
                 case 4:
-                    addLong(reader.readLong());
+                    addLong(new NBTLong(reader.readLong()));
                     break;
                 case 5:
-                    addFloat(reader.readFloat());
+                    addFloat(new NBTFloat(reader.readFloat()));
                     break;
                 case 6:
-                    addDouble(reader.readDouble());
+                    addDouble(new NBTDouble(reader.readDouble()));
                     break;
                 case 7:
-                    addByteArray(reader.readFollowingBytes(reader.readInt()));
+                    addByteArray(new NBTByteArray(reader.readFollowingBytes(reader.readInt())));
                     break;
                 case 8:
-                    addString(reader.readString(reader.readShort()));
+                    addString(new NBTString(reader.readString(reader.readShort())));
                     break;
                 case 9:
                     addList(new NBTList(reader.getFromOffset(false), false));
@@ -67,10 +71,10 @@ public class NBTList extends NBTBase {
                     addCompound(new NBTCompound(reader.getFromOffset(false), false));
                     break;
                 case 11:
-                    addIntArray(reader.readIntArray(reader.readInt()));
+                    addIntArray(new NBTIntArray(reader.readIntArray(reader.readInt())));
                     break;
                 case 12:
-                    addLongArray(reader.readLongArray(reader.readInt()));
+                    addLongArray(new NBTLongArray(reader.readLongArray(reader.readInt())));
                     break;
             }
 
@@ -78,10 +82,6 @@ public class NBTList extends NBTBase {
         }
 
         setLength(reader.getOffset());
-    }
-
-    public NBTList() {
-
     }
 
     public NBTBase[] getComponents() {
@@ -106,6 +106,119 @@ public class NBTList extends NBTBase {
         }
 
         return writer.getData();
+    }
+
+    public NBTList addComponent(NBTBase base) {
+        values.add(base);
+        return this;
+    }
+
+    public NBTList addByte(NBTByte component) {
+        values.add(component);
+        return this;
+    }
+
+    public void removeByte(NBTByte component) {
+        values.removeIf(base -> base.getAsByte() == component.getAsByte());
+    }
+
+    public NBTList addShort(NBTShort component) {
+        values.add(component);
+        return this;
+    }
+
+    public void removeShort(NBTShort component) {
+        values.removeIf(base -> base.getAsShort() == component.getAsShort());
+    }
+
+    public NBTList addInt(NBTInt component) {
+        values.add(component);
+        return this;
+    }
+
+    public void removeInt(NBTInt component) {
+        values.removeIf(base -> base.getAsInt() == component.getAsInt());
+    }
+
+    public NBTList addLong(NBTLong component) {
+        values.add(component);
+        return this;
+    }
+
+    public void removeLong(NBTLong component) {
+        values.removeIf(base -> base.getAsLong() == component.getAsLong());
+    }
+
+    public NBTList addFloat(NBTFloat component) {
+        values.add(component);
+        return this;
+    }
+
+    public void removeFloat(NBTFloat component) {
+        values.removeIf(base -> base.getAsFloat() == component.getAsFloat());
+    }
+
+    public NBTList addDouble(NBTDouble component) {
+        values.add(component);
+        return this;
+    }
+
+    public void removeDouble(NBTDouble component) {
+        values.removeIf(base -> base.getAsDouble() == component.getAsDouble());
+    }
+
+    public NBTList addString(NBTString component) {
+        values.add(component);
+        return this;
+    }
+
+    public void removeString(NBTString component) {
+        values.removeIf(base -> base.getAsString().equals(component.getAsString()));
+    }
+
+    public NBTList addByteArray(NBTByteArray component) {
+        values.add(component);
+        return this;
+    }
+
+    public void removeByteArray(NBTByteArray component) {
+        values.removeIf(base -> base.getAsByteArray() == component.getAsByteArray());
+    }
+
+    public NBTList addIntArray(NBTIntArray component) {
+        values.add(component);
+        return this;
+    }
+
+    public void removeIntArray(NBTIntArray component) {
+        values.removeIf(base -> base.getAsIntArray() == component.getAsIntArray());
+    }
+
+    public NBTList addLongArray(NBTLongArray component) {
+        values.add(component);
+        return this;
+    }
+
+    public void removeLongArray(NBTLongArray component) {
+        values.removeIf(base -> base.getAsLongArray() == component.getAsLongArray());
+    }
+
+    public NBTList addCompound(NBTCompound component) {
+        values.add(component);
+        return this;
+    }
+
+    public void removeCompound(NBTCompound component) {
+        values.removeIf(base -> base.getAsCompound() == component.getAsCompound());
+    }
+
+    public NBTList addList(NBTList component) {
+        values.add(component);
+        return this;
+    }
+
+    public void removeList(NBTList component) {
+        values.removeIf(base -> base.getAsList() == component.getAsList());
     }
 
     public NBTList addByte(int value) {
@@ -236,38 +349,6 @@ public class NBTList extends NBTBase {
         }
     }
 
-    public NBTList addList(NBTList value) {
-        values.add(value);
-        return this;
-    }
-
-    public void removeList(NBTList value) {
-        for(NBTBase base : values) {
-            if(base instanceof NBTList) {
-                if(base.getAsList() == value) {
-                    values.remove(base);
-                    return;
-                }
-            }
-        }
-    }
-
-    public NBTList addCompound(NBTCompound value) {
-        values.add(value);
-        return this;
-    }
-
-    public void removeCompound(NBTCompound value) {
-        for(NBTBase base : values) {
-            if(base instanceof NBTCompound) {
-                if(base.getAsCompound() == value) {
-                    values.remove(base);
-                    return;
-                }
-            }
-        }
-    }
-
     public NBTList addIntArray(int[] value) {
         values.add(new NBTIntArray(value));
         return this;
@@ -298,5 +379,17 @@ public class NBTList extends NBTBase {
                 }
             }
         }
+    }
+
+    public int getTagID() {
+        return tagID;
+    }
+
+    public void setTagID(int tagID) {
+        this.tagID = tagID;
+    }
+
+    public void removeComponentAt(int index) {
+        values.remove(index);
     }
 }

@@ -39,7 +39,7 @@ public class ProjectSelector {
     }
 
     public String createWindow() {
-        dialog = new JDialog((Frame) null, "Bob Project Selector", true);
+        dialog = new JDialog(null, "Bob Project Selector", Dialog.ModalityType.DOCUMENT_MODAL);
 
         dialog.setContentPane(this.mainPanel);
         dialog.setSize(400, 300);

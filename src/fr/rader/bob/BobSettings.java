@@ -1,7 +1,7 @@
 package fr.rader.bob;
 
-import fr.rader.bob.nbt.NBTBase;
-import fr.rader.bob.nbt.NBTCompound;
+import fr.rader.bob.nbt.tags.NBTBase;
+import fr.rader.bob.nbt.tags.NBTCompound;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -13,8 +13,6 @@ public class BobSettings {
     private final static Map<String, String> settings = new HashMap<>();
 
     private final File settingsFile;
-
-    private boolean badlionSupport = false;
 
     public BobSettings() {
         this.settingsFile = new File(OS.getBobFolder() + "settings.nbt");
@@ -38,70 +36,9 @@ public class BobSettings {
             for(NBTBase base : nbt.getComponents()) {
                 settings.put(base.getName(), base.getAsString());
             }
-
-            if(settings.containsKey("badlionSupport")) {
-                badlionSupport = canSupportBadlion(settings.get("badlionSupport").getBytes());
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private boolean canSupportBadlion(byte[] inputBytes) {
-        BitReader bitReader = new BitReader(inputBytes);
-        String out = "";
-
-        boolean start = true;
-        int rleCounter = 0;
-        int offset = 0;
-        byte bitPair;
-        while(offset != bitReader.getDataLength() * 4) {
-            bitPair = bitReader.readBits(2);
-            if(bitPair < 0) return false;
-
-            if(start) out += (bitPair == 0) ? "1" : "0";
-
-            if(bitPair == 0) {
-                if(rleCounter == 0 && !start) out += "00";
-                rleCounter++;
-            } else if(bitPair <= 3) {
-                if(rleCounter != 0) {
-                    out += rleNormal(rleCounter);
-                    rleCounter = 0;
-                }
-
-                out += ((bitPair <= 1) ? "0" : "") + Integer.toBinaryString(bitPair);
-            }
-
-            start = false;
-            offset++;
-        }
-
-        if(rleCounter != 0) out += rleNormal(rleCounter);
-
-        return out.equals(Long.toBinaryString(6134818607710629960L));
-    }
-
-    public boolean hasBadlionSupport() {
-        return badlionSupport;
-    }
-
-    private String rleNormal(int rleCounter) {
-        rleCounter++;
-        String number = Integer.toBinaryString(rleCounter);
-        int biggestPower = 0;
-        for(int i = 0; i < number.length(); i++) {
-            if(number.charAt(i) == '1') {
-                biggestPower = (int) Math.pow(2, number.length() - i - 1);
-                break;
-            }
-        }
-
-        int v = rleCounter - biggestPower;
-        int l = biggestPower - 2;
-
-        int val = (l << number.length() - 1) | v;
-        return ((val <= 1) ? "0" : "") + Integer.toBinaryString(val);
     }
 
     public static String getWorkingDirectory() {

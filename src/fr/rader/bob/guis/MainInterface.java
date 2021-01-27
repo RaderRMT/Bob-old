@@ -4,32 +4,28 @@ import fr.rader.bob.DataWriter;
 import fr.rader.bob.IO;
 import fr.rader.bob.Main;
 import fr.rader.bob.ReplayData;
-import fr.rader.bob.nbt.NBTCompound;
+import fr.rader.bob.nbt.tags.NBTCompound;
 import fr.rader.bob.packet.Packet;
 import fr.rader.bob.packet.PacketReader;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.*;
 import java.io.File;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class MainInterface {
 
     private static MainInterface instance;
 
-    private final ReplayData replayData;
-
     public static MainInterface getInstance() {
         return instance;
     }
+
+    private final ReplayData replayData;
 
     public JFrame frame;
     public JPanel panel;
@@ -65,6 +61,7 @@ public class MainInterface {
         root = new DefaultMutableTreeNode("Packet");
         treeModel = new DefaultTreeModel(root);
         dataTree = new JTree(treeModel);
+        //dataTree.setCellRenderer(new EditorTreeCellRenderer());
 
         // minimum size for canvas (240p here)
         engineCanvas.setMinimumSize(new Dimension(426, 240));
@@ -73,7 +70,15 @@ public class MainInterface {
         horizontalSplit.setLeftComponent(engineCanvas);
     }
 
-    public void showPacketData(LinkedHashMap<String, Object> packetData) {
+    public void showPacketData(Packet packet, PacketReader packetReader) {
+        root.removeAllChildren();
+
+        root.add(buildTree(packetReader.readPacket(packet), packetReader, null));
+
+        treeModel.reload();
+    }
+
+    /*public void showPacketData(LinkedHashMap<String, Object> packetData) {
         root.removeAllChildren();
 
         root.add(buildTree(packetData, null));
@@ -81,14 +86,37 @@ public class MainInterface {
         //root.setUserObject("Packet " + String.format("%1$02X", packet.getPacketID()));
 
         treeModel.reload();
-    }
+    }*/
 
-    private DefaultMutableTreeNode buildTree(LinkedHashMap<String, Object> map, String parent) {
+    private DefaultMutableTreeNode buildTree(LinkedHashMap<String, Object> packetDataMap, PacketReader packetReader, String parent) {
         DefaultMutableTreeNode currentNode = new DefaultMutableTreeNode();
 
         if(parent != null) currentNode.setUserObject(parent);
 
-        for(Map.Entry<String, Object> element : map.entrySet()) {
+        /*for(Map.Entry<String, Object> packetElement : packetDataMap.entrySet()) {
+            String elementName = packetElement.getKey();
+
+            if(elementName.startsWith("_")) {
+                String[] splittedElementName = elementName.split("_");
+                switch(splittedElementName[1]) {
+                    case "array":
+                        String arrayName = null;
+                        if(splittedElementName.length == 4) {
+                            arrayName = splittedElementName[3];
+                        }
+                        break;
+                    case "match":
+                        break;
+                    case "if":
+                        break;
+                }
+            } else {
+                Cell cell = new Cell(elementName, packetReader.getDataTypeOf(elementName));
+                System.out.println(cell.getName());
+            }
+        }*/
+
+        /*for(Map.Entry<String, Object> element : map.entrySet()) {
             if(element.getValue() instanceof LinkedHashMap) {
                 String name = element.getKey();
 
@@ -98,7 +126,7 @@ public class MainInterface {
             } else {
                 currentNode.add(new DefaultMutableTreeNode(element.getKey()));
             }
-        }
+        }*/
 
         return currentNode;
     }
@@ -165,6 +193,26 @@ public class MainInterface {
     }
 }
 
+class EditorTreeCellRenderer implements TreeCellRenderer {
+
+    private JLabel label;
+
+    public EditorTreeCellRenderer() {
+        label = new JLabel();
+    }
+
+    @Override
+    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+        Object o = ((DefaultMutableTreeNode) value).getUserObject();
+        System.out.println(o);
+
+        label.setIcon(null);
+        label.setText("" + value);
+
+        return label;
+    }
+}
+
 class MenuBarListener implements ActionListener {
 
     @Override
@@ -198,7 +246,7 @@ class MenuBarListener implements ActionListener {
                 Packet packet = new Packet(writer.getData(), 0x06);
                 PacketReader packetReader = new PacketReader(packet.getPacketID());
 
-                MainInterface.getInstance().showPacketData(packetReader.readPacket(packet));
+                MainInterface.getInstance().showPacketData(packet, packetReader);
                 break;
         }
     }

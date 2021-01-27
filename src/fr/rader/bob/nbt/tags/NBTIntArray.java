@@ -1,4 +1,4 @@
-package fr.rader.bob.nbt;
+package fr.rader.bob.nbt.tags;
 
 import fr.rader.bob.DataWriter;
 

@@ -1,28 +1,32 @@
-package fr.rader.bob.nbt;
+package fr.rader.bob.nbt.tags;
 
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
 
-public class NBTString extends NBTBase {
+public class NBTInt extends NBTBase {
 
-    private String value;
+    private int value;
 
-    public NBTString(String name, String value) {
-        setId(0x08);
+    public NBTInt(String name, int value) {
+        setId(0x03);
         setName(name);
 
         this.value = value;
     }
 
-    public NBTString(String value) {
+    public NBTInt(int value) {
         this.value = value;
     }
 
-    public String getValue() {
+    public NBTInt(byte[] rawData) {
+        this.value = new DataReader(rawData).readInt();
+    }
+
+    public int getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(int value) {
         this.value = value;
     }
 
@@ -36,8 +40,7 @@ public class NBTString extends NBTBase {
             writer.writeString(getName());
         }
 
-        writer.writeShort(value.length());
-        writer.writeString(value);
+        writer.writeInt(value);
 
         return writer.getData();
     }

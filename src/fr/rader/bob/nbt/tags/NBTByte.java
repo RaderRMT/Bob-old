@@ -1,32 +1,32 @@
-package fr.rader.bob.nbt;
+package fr.rader.bob.nbt.tags;
 
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
 
-public class NBTDouble extends NBTBase {
+public class NBTByte extends NBTBase {
 
-    private double value;
+    private int value;
 
-    public NBTDouble(String name, double value) {
-        setId(0x06);
+    public NBTByte(String name, int value) {
+        setId(0x01);
         setName(name);
 
         this.value = value;
     }
 
-    public NBTDouble(double value) {
+    public NBTByte(int value) {
         this.value = value;
     }
 
-    public NBTDouble(byte[] rawData) {
-        this.value = new DataReader(rawData).readDouble();
+    public NBTByte(byte[] rawData) {
+        this.value = new DataReader(rawData).readByte();
     }
 
-    public double getValue() {
+    public int getValue() {
         return value;
     }
 
-    public void setValue(double value) {
+    public void setValue(int value) {
         this.value = value;
     }
 
@@ -40,7 +40,7 @@ public class NBTDouble extends NBTBase {
             writer.writeString(getName());
         }
 
-        writer.writeDouble(value);
+        writer.writeByte(value);
 
         return writer.getData();
     }

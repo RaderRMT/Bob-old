@@ -665,7 +665,7 @@
 //    varint "Entity ID"
 //
 //    byte "Index"
-//    if "Index" <= 255 {
+//    if "Index" < 255 {
 //        // todo
 //    }
 //}
@@ -685,18 +685,20 @@
 }
 
 // Entity Equipment
-//47: {
-//    varint "Entity ID"
-//    // todo: implement do while loops for that
-//
-//    //byte "Slot"
-//    //boolean "Present"
-//    //if "Present" {
-//    //    varint "Item ID"
-//    //    byte "Item Count"
-//    //    nbt "NBT"
-//    //}
-//}
+47: {
+    varint "Entity ID"
+    // todo: implement do while loops for that
+
+    do {
+        byte "Slot"
+        boolean "Present"
+        if "Present" {
+            varint "Item ID"
+            byte "Item Count"
+            nbt "NBT"
+        }
+    } while "Slot" & 0x80 != 1
+}
 
 // Set Experience
 // Update Health

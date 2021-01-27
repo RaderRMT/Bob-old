@@ -2,7 +2,7 @@ package fr.rader.bob;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import fr.rader.bob.nbt.NBTCompound;
+import fr.rader.bob.nbt.tags.NBTCompound;
 import fr.rader.bob.types.Position;
 
 import java.io.File;

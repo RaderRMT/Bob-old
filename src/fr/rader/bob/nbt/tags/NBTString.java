@@ -1,27 +1,27 @@
-package fr.rader.bob.nbt;
+package fr.rader.bob.nbt.tags;
 
 import fr.rader.bob.DataWriter;
 
-public class NBTLongArray extends NBTBase {
+public class NBTString extends NBTBase {
 
-    private long[] value;
+    private String value;
 
-    public NBTLongArray(String name, long[] value) {
-        setId(0x0c);
+    public NBTString(String name, String value) {
+        setId(0x08);
         setName(name);
 
         this.value = value;
     }
 
-    public NBTLongArray(long[] value) {
+    public NBTString(String value) {
         this.value = value;
     }
 
-    public long[] getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(long[] value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
@@ -35,8 +35,8 @@ public class NBTLongArray extends NBTBase {
             writer.writeString(getName());
         }
 
-        writer.writeInt(value.length);
-        writer.writeLongArray(value);
+        writer.writeShort(value.length());
+        writer.writeString(value);
 
         return writer.getData();
     }

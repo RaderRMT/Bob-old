@@ -1,7 +1,5 @@
 package fr.rader.bob.packet;
 
-import java.util.Arrays;
-
 public class Packet {
 
     private final byte[] rawData;

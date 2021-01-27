@@ -3,7 +3,7 @@ package fr.rader.bob.packet;
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
 import fr.rader.bob.Main;
-import fr.rader.bob.nbt.NBTCompound;
+import fr.rader.bob.nbt.tags.NBTCompound;
 import fr.rader.bob.types.Position;
 
 import java.io.BufferedReader;
@@ -77,13 +77,13 @@ public class PacketReader {
                 continue;
             }
 
-            writeValue(writer, entry.getValue(), getDataType(entry.getKey(), properties));
+            writeValue(writer, entry.getValue(), getDataTypeOf(entry.getKey()));
         }
     }
 
     private void serializeList(List<Object> entryList, DataWriter writer, String key) {
         for(Object value : entryList) {
-            writeValue(writer, value, Objects.requireNonNull(getDataType(key, properties)));
+            writeValue(writer, value, getDataTypeOf(key));
         }
     }
 
@@ -130,7 +130,7 @@ public class PacketReader {
                     case "if":
                         String comparison = variable.split("_")[3];
                         String mustMatch = variable.split("_")[4];
-                        if(getDataType(associatedVariable, properties).equals("boolean")) {
+                        if(getDataTypeOf(associatedVariable).equals("boolean")) {
                             if((boolean) tempProperties.get(associatedVariable) == Boolean.parseBoolean(mustMatch)) {
                                 out.put(variable, readMap(value, reader));
                             }
@@ -185,6 +185,10 @@ public class PacketReader {
         }
 
         return out;
+    }
+
+    public String getDataTypeOf(String key) {
+        return getDataType(key, properties);
     }
 
     private String getDataType(String key, LinkedHashMap<String, Object> list) {
@@ -303,8 +307,6 @@ public class PacketReader {
                     out.put(variable, line.split(" ")[0]);
                     properties.put(variable, line.split(" ")[0]);
                 }
-
-                //System.out.println("Skipping bad line at line " + lineCounter + ": " + line);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -429,5 +431,9 @@ public class PacketReader {
     private void stop(String message) {
         System.out.println("Error at line " + lineCounter + ": " + message);
         System.exit(-1);
+    }
+
+    public LinkedHashMap<String, Object> getProperties() {
+        return properties;
     }
 }

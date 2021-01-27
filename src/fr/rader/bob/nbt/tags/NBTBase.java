@@ -1,4 +1,4 @@
-package fr.rader.bob.nbt;
+package fr.rader.bob.nbt.tags;
 
 public class NBTBase {
 

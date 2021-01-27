@@ -1,6 +1,6 @@
 package fr.rader.bob;
 
-import fr.rader.bob.nbt.NBTCompound;
+import fr.rader.bob.nbt.tags.NBTCompound;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -34,6 +34,10 @@ public class IO {
         }
 
         return null;
+    }
+
+    public static void writeBinaryFile(String destination, byte[] data) {
+        writeBinaryFile(new File(destination), data);
     }
 
     public static void writeBinaryFile(File destination, byte[] data) {

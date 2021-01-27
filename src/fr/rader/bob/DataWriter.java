@@ -1,6 +1,6 @@
 package fr.rader.bob;
 
-import fr.rader.bob.nbt.NBTCompound;
+import fr.rader.bob.nbt.tags.NBTCompound;
 import fr.rader.bob.types.Position;
 
 import java.nio.ByteBuffer;

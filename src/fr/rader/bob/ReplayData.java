@@ -21,6 +21,8 @@ public class ReplayData {
 
     private boolean alreadyHasReplay = false;
 
+    private final int[] firstPackets = { 0x02, 0x24 };
+
     public ReplayData(File project) {
         this.project = project;
 
@@ -43,6 +45,7 @@ public class ReplayData {
 
         extractFiles();
         readMetaData();
+        checkBadlion();
     }
 
     public File getProject() {
@@ -74,20 +77,44 @@ public class ReplayData {
         } catch (ZipException e) {
             e.printStackTrace();
         }
+    }
 
-        if(!Main.getInstance().getSettings().hasBadlionSupport()
-                && new File(project.getAbsolutePath() + "/files/badlion.json").exists()) {
-            JOptionPane.showMessageDialog(null, "Badlion Replay detected, stopping Bob.");
+    private void checkBadlion() {
+        if(new File(project.getAbsolutePath() + "/files/badlion.json").exists()) stopBob("badlion");
+        if(!new File(project.getAbsolutePath() + "/files/mods.json").exists()) stopBob("mods");
+        if(!new File(project.getAbsolutePath() + "/files/recording.tmcpr.crc32").exists()) stopBob("crc");
+        if(!metaData.containsKey("serverName")) stopBob("If you did not use Badlion's ReplayMod, please update your ReplayMod to the latest version");
+        if(!((String) metaData.get("generator")).startsWith("ReplayMod")) stopBob("generator");
 
-            // clear last opened project and delete files
-            Main main = Main.getInstance();
-            main.getSettings().setProperty("lastProject", "");
-            main.getSettings().saveSettings();
-            main.getProjects().removeProject(project.getName());
-            main.getProjects().saveProjects();
-
-            System.exit(0);
+        try {
+            DataReader reader = new DataReader(Files.readAllBytes(getRecording().toPath()));
+            for(int id : firstPackets) {
+                reader.readInt();
+                int length = reader.readInt();
+                if(reader.readVarInt() != id) stopBob("varint");
+                reader.readFollowingBytes(length - 1);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    private void stopBob() {
+        stopBob("");
+    }
+
+    private void stopBob(String message) {
+        if(!message.isEmpty()) message = "\n" + message;
+        JOptionPane.showMessageDialog(null, "Badlion Replay detected, stopping Bob.\nPlease use the official ReplayMod." + message);
+
+        // clear last opened project and delete files
+        Main main = Main.getInstance();
+        main.getSettings().setProperty("lastProject", "");
+        main.getSettings().saveSettings();
+        main.getProjects().removeProject(project.getName());
+        main.getProjects().saveProjects();
+
+        System.exit(0);
     }
 
     private void readMetaData() {

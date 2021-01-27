@@ -1,4 +1,4 @@
-package fr.rader.bob.nbt;
+package fr.rader.bob.nbt.tags;
 
 import fr.rader.bob.DataReader;
 import fr.rader.bob.DataWriter;
@@ -17,7 +17,7 @@ public class NBTCompound extends NBTBase {
     }
 
     public NBTCompound() {
-
+        setId(0x0a);
     }
 
     public NBTCompound(byte[] rawData, boolean hasName) {
@@ -120,6 +120,84 @@ public class NBTCompound extends NBTBase {
         return writer.getData();
     }
 
+    public NBTCompound addComponent(NBTBase component) {
+        components.add(component);
+        names.add(component.getName());
+        return this;
+    }
+
+    public NBTCompound addByte(NBTByte element) {
+        components.add(element);
+        names.add(element.getName());
+        return this;
+    }
+
+    public NBTCompound addShort(NBTShort element) {
+        components.add(element);
+        names.add(element.getName());
+        return this;
+    }
+
+    public NBTCompound addInt(NBTInt element) {
+        components.add(element);
+        names.add(element.getName());
+        return this;
+    }
+
+    public NBTCompound addLong(NBTLong element) {
+        components.add(element);
+        names.add(element.getName());
+        return this;
+    }
+
+    public NBTCompound addFloat(NBTFloat element) {
+        components.add(element);
+        names.add(element.getName());
+        return this;
+    }
+
+    public NBTCompound addDouble(NBTDouble element) {
+        components.add(element);
+        names.add(element.getName());
+        return this;
+    }
+
+    public NBTCompound addString(NBTString element) {
+        components.add(element);
+        names.add(element.getName());
+        return this;
+    }
+
+    public NBTCompound addByteArray(NBTByteArray element) {
+        components.add(element);
+        names.add(element.getName());
+        return this;
+    }
+
+    public NBTCompound addIntArray(NBTIntArray element) {
+        components.add(element);
+        names.add(element.getName());
+        return this;
+    }
+
+    public NBTCompound addLongArray(NBTLongArray element) {
+        components.add(element);
+        names.add(element.getName());
+        return this;
+    }
+
+    public NBTCompound addCompound(NBTCompound element) {
+        components.add(element);
+        names.add(element.getName());
+        return this;
+    }
+
+    public NBTCompound addList(NBTList element) {
+        components.add(element);
+        names.add(element.getName());
+        return this;
+    }
+
     public NBTCompound addByte(String name, int value) {
         components.add(new NBTByte(name, value));
         names.add(name);
@@ -192,5 +270,10 @@ public class NBTCompound extends NBTBase {
         components.add(new NBTLongArray(name, value));
         names.add(name);
         return this;
+    }
+
+    public void removeComponentAt(int index) {
+        components.remove(index);
+        names.remove(index);
     }
 }

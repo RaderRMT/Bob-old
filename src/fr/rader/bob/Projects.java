@@ -1,9 +1,9 @@
 package fr.rader.bob;
 
-import fr.rader.bob.nbt.NBTBase;
-import fr.rader.bob.nbt.NBTCompound;
-import fr.rader.bob.nbt.NBTList;
-import fr.rader.bob.nbt.NBTString;
+import fr.rader.bob.nbt.tags.NBTBase;
+import fr.rader.bob.nbt.tags.NBTCompound;
+import fr.rader.bob.nbt.tags.NBTList;
+import fr.rader.bob.nbt.tags.NBTString;
 
 import javax.swing.*;
 import java.io.File;
