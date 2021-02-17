@@ -1,0 +1,552 @@
+// Spawn Object
+00: {
+    varint "Entity ID"
+    uuid "Object UUID"
+    byte "Type"
+    double "X"
+    double "Y"
+    double "Z"
+    angle "Pitch"
+    angle "Yaw"
+    int "Data"
+    short "Velocity X"
+    short "Velocity Y"
+    short "Velocity Z"
+}
+
+// Spawn Experience Orb
+01: {
+    varint "Entity ID"
+    double "X"
+    double "Y"
+    double "Z"
+    short "Count"
+}
+
+// Spawn Global Entity
+02: {
+    varint "Entity ID"
+    byte "Type"
+    double "X"
+    double "Y"
+    double "Z"
+}
+
+// Spawn Mob
+03: {
+    varint "Entity ID"
+    uuid "Entity UUID"
+    byte "Type"
+    double "X"
+    double "Y"
+    double "Z"
+    angle "Yaw"
+    angle "Pitch"
+    angle "Head Pitch"
+    short "Velocity X"
+    short "Velocity Y"
+    short "Velocity Z"
+    metadata "Metadata"
+}
+
+// Spawn Painting
+04: {
+    varint "Entity ID"
+    uuid "Entity UUID"
+    string "Title"
+    position "Location"
+    byte "Direction"
+}
+
+// Spawn Player
+05: {
+    varint "Entity ID"
+    uuid "Player UUID"
+    double "X"
+    double "Y"
+    double "Z"
+    angle "Yaw"
+    angle "Pitch"
+    metadata "Metadata" // todo: implement metadata (maybe in a Metadata.java class)
+}
+
+// Animation
+06: {
+    varint "Entity ID"
+    byte "Animation"
+}
+
+// Statistics
+
+// Block Break Animation
+08: {
+    varint "Entity ID"
+    position "Location"
+    byte "Destroy Stage"
+}
+
+// Update Block Entity
+09: {
+    position "Location"
+    byte "Action"
+    nbt "NBT Data"
+}
+
+// Block Action
+0A: {
+    position "Location"
+    byte "Byte 1"
+    byte "Byte 2"
+    varint "Block Type"
+}
+
+// Block Change
+0B: {
+    position "Location"
+    varint "Block ID"
+}
+
+// Boss Bar
+// Server Difficulty
+// Tab-Complete
+// Chat Message
+
+// Multi Block Change
+10: {
+    int "Chunk X"
+    int "Chunk Z"
+
+    varint "Record Count"
+    array["Record Count"] "Records" [
+        byte "Horizontal Position"
+        byte "Y Coordinate"
+        varint "Block ID"
+    ]
+}
+
+// Confirm Transaction
+// Close Window
+// Open Window
+// Window Items
+// Window Property
+// Set Slot
+// Set Cooldown
+// Plugin Message
+// Named Sound Effect
+
+// Disconnect
+1A: {
+    chat "Reason"
+}
+
+// Entity Status
+1B: {
+    int "Entity ID"
+    byte "Entity Status"
+}
+
+// Explosion
+1C: {
+    float "X"
+    float "Y"
+    float "Z"
+    float "Radius"
+
+    int "Record Count"
+    array["Record Count"] "Records" [
+        byte "X"
+        byte "Y"
+        byte "Z"
+    ]
+
+    float "Player Motion X"
+    float "Player Motion Y"
+    float "Player Motion Z"
+}
+
+// Unload Chunk
+1D: {
+    int "Chunk X"
+    int "Chunk Z"
+}
+
+// Change Game State
+1E: {
+    byte "Reason"
+    float "Value"
+}
+
+// Keep Alive
+
+// Chunk Data
+20: {
+    int "Chunk X"
+    int "Chunk Z"
+    boolean "Ground-Up continuous"
+    varint "Primary Bit Map"
+
+    varint "Size"
+    byte["Size"] "Data"
+    if "Ground-Up continuous" {
+        byte["Size"] "Biomes"
+    }
+
+    varint "Number of Block Entities"
+    nbt["Number of Block Entities"] "Block Entities"
+}
+
+// Effect
+21: {
+    int "Effect ID"
+    position "Location"
+    int "Data"
+    boolean "Disable Relative Volume"
+}
+
+// Particle
+22: {
+    int "Particle ID"
+    boolean "Long Distance"
+    float "X"
+    float "Y"
+    float "Z"
+    float "Offset X"
+    float "Offset Y"
+    float "Offset Z"
+    float "Particle Data"
+    int "Particle Count"
+    varint["Number of particles"] "Data"
+}
+
+// Join Game
+23: {
+    int "Entity ID"
+    byte "Gamemode"
+    int "Dimension"
+    byte "Difficulty"
+    byte "Max Players"
+    string "Level Type"
+    boolean "Reduced Debug Info"
+}
+
+// Maps
+24: {
+    varint "Item Damage"
+    byte "Scale"
+    boolean "Tracking Position"
+
+    varint "Icon Count"
+    array["Icon Count"] "Icons" [
+        byte "Direction and Type"
+        byte "X"
+        byte "Z"
+    ]
+
+    byte "Columns"
+    if "Columns" > 0 {
+        byte "Rows"
+        byte "X"
+        byte "Z"
+        varint "Length"
+        byte["Length"] "Data"
+    }
+}
+
+// Entity Relative Move
+25: {
+    varint "Entity ID"
+    short "Delta X"
+    short "Delta Y"
+    short "Delta Z"
+    boolean "On Ground"
+}
+
+// Entity Look and Relative Move
+26: {
+    varint "Entity ID"
+    byte "Delta X"
+    byte "Delta Y"
+    byte "Delta Z"
+    byte "Yaw"
+    byte "Pitch"
+    boolean "On Ground"
+}
+
+// Entity Look
+27: {
+    varint "Entity ID"
+    angle "Yaw"
+    angle "Pitch"
+    boolean "On Ground"
+}
+
+// Entity
+28: {
+    varint "Entity ID"
+}
+
+// Vehicle Move
+29: {
+    double "X"
+    double "Y"
+    double "Z"
+    float "Yaw"
+    float "Pitch"
+}
+
+// Open Sign Editor
+// Combat Event
+// Player Abilities
+
+// Player List Item
+2D: {
+    varint "Action"
+
+    varint "Number of Players"
+    array["Number of Players"] "Players" [
+        uuid "UUID"
+        match "Action" {
+            0 => { // add player
+                string "Name"
+
+                varint "Number of Properties"
+                array["Number of Properties"] "Properties" [
+                    string "Name"
+                    string "Value"
+
+                    boolean "Is Signed"
+                    if "Is Signed" {
+                        string "Signature"
+                    }
+                ]
+
+                varint "Gamemode"
+                varint "Ping"
+
+                boolean "Has Display Name"
+                if "Has Display Name" {
+                    chat "Display Name"
+                }
+            }
+
+            1 => { // update gamemode
+                varint "Gamemode"
+            }
+
+            2 => { // update latency
+                varint "Ping"
+            }
+
+            3 => { // update display name
+                boolean "Has Display Name"
+                if "Has Display Name" {
+                    chat "Display Name"
+                }
+            }
+
+            //4 => { // remove player (has no fields)
+            //}
+        }
+    ]
+}
+
+// Player Position and Look
+2E: {
+    double "X"
+    double "Y"
+    double "Z"
+    float "Yaw"
+    float "Pitch"
+    byte "Flags"
+    varint "Teleport ID"
+}
+
+// Use Bed
+2F: {
+    varint "Entity ID"
+    position "Location"
+}
+
+// Destroy Entities
+30: {
+    varint "Count"
+    varint["Count"] "Entity IDs"
+}
+
+// Remove Entity Effect
+31: {
+    varint "Entity ID"
+    byte "Effect ID"
+}
+
+// Resource Pack Send
+
+// Respawn
+33: {
+    int "Dimension"
+    byte "Difficulty"
+    byte "Gamemode"
+    string "Level Type"
+}
+
+// Entity Head Look
+34: {
+    varint "Entity ID"
+    angle "Head Yaw"
+}
+
+// World Border
+35: {
+    varint "Action"
+    match "Action" {
+        0 => { // set size
+            double "Radius"
+        }
+
+        1 => { // lerp size
+            double "Old Radius"
+            double "New Radius"
+            varlong "Speed"
+        }
+
+        2 => { // set center
+            double "X"
+            double "Z"
+        }
+
+        3 => { // initialize
+            double "X"
+            double "Z"
+            double "Old Radius"
+            double "New Radius"
+            varlong "Speed"
+            varint "Portal Teleport Boundary"
+            varint "Warning Time"
+            varint "Warning Blocks"
+        }
+        
+        4 => { // set warning time
+            varint "Warning Time"
+        }
+        
+        5 => { // set warning blocks
+            varint "Warning Blocks"
+        }
+    }
+}
+
+// Camera
+
+// Held Item Change
+37: {
+    byte "Slot"
+}
+
+// Display Scoreboard
+
+// Entity Metadata
+39: {
+    varint "Entity ID"
+    metadata "Metadata"
+}
+
+// Attach Entity
+3A: {
+    int "Attached Entity ID"
+    int "Holding Entity ID"
+}
+
+// Entity Velocity
+3B: {
+    varint "Entity ID"
+    short "Velocity X"
+    short "Velocity Y"
+    short "Velocity Z"
+}
+
+// Entity Equipment
+3C: {
+    int "Entity ID"
+    short "Slot"
+    byte "Slot"
+    slot "Item"
+    // boolean "Present"
+    // if "Present" {
+    //     varint "Item ID"
+    //     byte "Item Count"
+    //     nbt "NBT"
+    // }
+}
+
+// Set Experience
+// Update Health
+// Scoreboard Objective
+
+// Set Passengers
+40: {
+    varint "Entity ID"
+    varint "Passenger Count"
+    varint["Passenger Count"] "Passengers"
+}
+
+// Teams
+// Update Score
+
+// Spawn Position
+43: {
+    position "Location"
+}
+
+// Time update
+44: {
+    long "World Age"
+    long "Time of day"
+}
+
+// Title
+// Sound Effect
+// Player List Header And Footer
+
+// Collect Item
+48: {
+    varint "Collected Entity ID"
+    varint "Collector Entity ID"
+}
+
+// Entity Teleport
+49: {
+    varint "Entity ID"
+    double "X"
+    double "Y"
+    double "Z"
+    angle "Yaw"
+    angle "Pitch"
+    boolean "On Ground"
+}
+
+// Entity Properties
+4A: {
+    varint "Entity ID"
+
+    int "Number of Properties"
+    array["Count"] "Properties" [
+        string "Key"
+        double "Value"
+
+        varint "List Length"
+        array["List Length"] "Modifiers" [
+            uuid "UUID"
+            double "Amount"
+            byte "Operation"
+        ]
+    ]
+}
+
+// Entity Effect
+4B: {
+    varint "Entity ID"
+    byte "Effect ID"
+    byte "Amplifier"
+    varint "Duration"
+    boolean "Hide Particles"
+}

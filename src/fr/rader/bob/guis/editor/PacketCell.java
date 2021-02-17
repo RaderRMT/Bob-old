@@ -1,13 +1,19 @@
 package fr.rader.bob.guis.editor;
 
-public class Cell {
+import javax.swing.tree.DefaultMutableTreeNode;
+
+public class PacketCell extends DefaultMutableTreeNode {
 
     private String name;
     private String icon;
 
-    public Cell(String name, String icon) {
+    public PacketCell(String name, String icon) {
         this.name = name;
         this.icon = icon;
+    }
+
+    public PacketCell(String name) {
+        this.name = name;
     }
 
     public String getName() {

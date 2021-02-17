@@ -41,7 +41,7 @@ public class ReplayData {
             System.exit(0);
         }
 
-        extractFiles();
+        if(!alreadyHasReplay) extractFiles();
         readMetaData();
         checkBadlion();
     }
@@ -60,6 +60,10 @@ public class ReplayData {
 
     public Object getMetaData(String key) {
         return metaData.get(key);
+    }
+
+    public int getProtocolVersion() {
+        return (int) ((double) metaData.get("protocol"));
     }
 
     private void extractFiles() {
@@ -83,14 +87,6 @@ public class ReplayData {
         if(!new File(project.getAbsolutePath() + "/files/recording.tmcpr.crc32").exists()) stopBob();
         if(!metaData.containsKey("serverName")) stopBob();
         if(!((String) metaData.get("generator")).startsWith("ReplayMod")) stopBob();
-
-        try {
-            DataReader reader = new DataReader(Files.readAllBytes(getRecording().toPath()));
-            reader.readLong();
-            if(reader.readVarInt() != 0x02) stopBob();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void stopBob() {
@@ -112,6 +108,19 @@ public class ReplayData {
             metaData = new Gson().fromJson(fileReader, Map.class);
             fileReader.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportReplay(String output) {
+        try {
+            ZipFile mcpr = new ZipFile(output);
+
+            mcpr.addFile(project.getAbsolutePath() + "/files/recording.tmcpr");
+            mcpr.addFile(project.getAbsolutePath() + "/files/recording.tmcpr.crc32");
+            mcpr.addFile(project.getAbsolutePath() + "/files/mods.json");
+            mcpr.addFile(project.getAbsolutePath() + "/files/metaData.json");
+        } catch (ZipException e) {
             e.printStackTrace();
         }
     }

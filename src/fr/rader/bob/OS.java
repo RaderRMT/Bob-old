@@ -26,6 +26,16 @@ public class OS {
         return null;
     }
 
+    public static String getLWJGLNativeOS() {
+        switch(getOS()) {
+            case "windows": return "windows";
+            case "mac": return "macos";
+            case "*nix": return "linux";
+        }
+
+        return null;
+    }
+
     public static String getMinecraftFolder() {
         switch(getOS()) {
             case "windows":

@@ -789,7 +789,7 @@ public class NBTEditor {
 
         button.setToolTipText(tooltip);
 
-        URL image = Main.class.getResource("/images/" + icon + ".png");
+        URL image = Main.class.getResource("/resources/images/" + icon + ".png");
         if(image != null) {
             button.setIcon(new ImageIcon(image, tooltip));
         } else {
@@ -827,7 +827,7 @@ class NBTCellRenderer extends DefaultTreeCellRenderer {
         if(value instanceof NBTCell) {
             NBTCell cell = (NBTCell) value;
 
-            URL imageUrl = Main.class.getResource("/images/" + cell.getIconName() + ".png");
+            URL imageUrl = Main.class.getResource("/resources/images/" + cell.getIconName() + ".png");
             if(imageUrl != null) setIcon(new ImageIcon(imageUrl));
 
             setText(cell.getName());
