@@ -72,6 +72,8 @@ public class NBTCell extends DefaultMutableTreeNode {
                 this.iconName = "longArray";
                 this.name += associatedNBT.getAsLongArray().length + " long integers";
                 break;
+            default:
+                System.out.println(tagID);
         }
     }
 
@@ -111,7 +113,6 @@ public class NBTCell extends DefaultMutableTreeNode {
                     associatedNBT.getAsNBTByte().setValue(value);
                     return true;
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Value must be between " + Byte.MIN_VALUE + " and " + Byte.MAX_VALUE);
                 }
                 return false;
@@ -126,7 +127,6 @@ public class NBTCell extends DefaultMutableTreeNode {
                     associatedNBT.getAsNBTShort().setValue(value);
                     return true;
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Value must be between " + Short.MIN_VALUE + " and " + Short.MAX_VALUE);
                 }
                 return false;
@@ -141,7 +141,6 @@ public class NBTCell extends DefaultMutableTreeNode {
                     associatedNBT.getAsNBTInt().setValue(value);
                     return true;
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Value must be between " + Integer.MIN_VALUE + " and " + Integer.MAX_VALUE);
                 }
                 return false;
@@ -156,7 +155,6 @@ public class NBTCell extends DefaultMutableTreeNode {
                     associatedNBT.getAsNBTLong().setValue(value);
                     return true;
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Value must be between " + Long.MIN_VALUE + " and " + Long.MAX_VALUE);
                 }
                 return false;
@@ -171,7 +169,6 @@ public class NBTCell extends DefaultMutableTreeNode {
                     associatedNBT.getAsNBTFloat().setValue(value);
                     return true;
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Value must be between " + Float.MIN_VALUE + " and " + Float.MAX_VALUE);
                 }
                 return false;
@@ -186,7 +183,6 @@ public class NBTCell extends DefaultMutableTreeNode {
                     associatedNBT.getAsNBTDouble().setValue(value);
                     return true;
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Value must be between " + Double.MIN_VALUE + " and " + Double.MAX_VALUE);
                 }
                 return false;

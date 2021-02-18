@@ -2,11 +2,16 @@ package fr.rader.bob;
 
 import fr.rader.bob.guis.MainInterface;
 import fr.rader.bob.guis.ProjectSelector;
+import fr.rader.bob.nbt.editor.NBTEditor;
+import fr.rader.bob.nbt.tags.NBTCompound;
+import fr.rader.bob.nbt.tags.NBTList;
+import fr.rader.bob.packet.PacketReader;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
 import javax.swing.*;
 import java.io.*;
+import java.nio.file.Files;
 
 public class Main {
 
@@ -45,8 +50,8 @@ public class Main {
         File project = new File(BobSettings.getWorkingDirectory() + "/projects/" + projectName);
 
         replayData = new ReplayData(project);
-        MainInterface mainInterface = new MainInterface();
-        mainInterface.createWindow();
+        //MainInterface mainInterface = new MainInterface();
+        //mainInterface.createWindow();
     }
 
     public static void main(String[] args) {

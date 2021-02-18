@@ -1,6 +1,6 @@
 package fr.rader.bob.nbt.editor;
 
-import fr.rader.bob.Main;
+import fr.rader.bob.OS;
 import fr.rader.bob.nbt.tags.*;
 
 import javax.swing.*;
@@ -9,6 +9,8 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -175,6 +177,7 @@ public class NBTEditor {
                 case 8:
                 case 11:
                 case 12:
+                    base.setId(list.getTagID());
                     NBTCell cell = new NBTCell(base, -1);
                     cell.setAllowsChildren(false);
                     currentCell.add(cell);
@@ -789,10 +792,10 @@ public class NBTEditor {
 
         button.setToolTipText(tooltip);
 
-        URL image = Main.class.getResource("/resources/images/" + icon + ".png");
-        if(image != null) {
+        try {
+            URL image = new File(OS.getBobFolder() + "resources/assets/nbt_editor_images/" + icon + ".png").toURI().toURL();
             button.setIcon(new ImageIcon(image, tooltip));
-        } else {
+        } catch (MalformedURLException e) {
             button.setText(tooltip);
         }
 
@@ -827,8 +830,12 @@ class NBTCellRenderer extends DefaultTreeCellRenderer {
         if(value instanceof NBTCell) {
             NBTCell cell = (NBTCell) value;
 
-            URL imageUrl = Main.class.getResource("/resources/images/" + cell.getIconName() + ".png");
-            if(imageUrl != null) setIcon(new ImageIcon(imageUrl));
+            try {
+                URL imageUrl = new File(OS.getBobFolder() + "resources/assets/nbt_editor_images/" + cell.getIconName() + ".png").toURI().toURL();
+                setIcon(new ImageIcon(imageUrl));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
 
             setText(cell.getName());
         }

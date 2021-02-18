@@ -2,12 +2,10 @@ package fr.rader.bob.packet;
 
 import fr.rader.bob.DataReader;
 import fr.rader.bob.Main;
+import fr.rader.bob.OS;
 
 import javax.swing.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -203,15 +201,13 @@ public class PacketReader {
     }
 
     private LinkedHashMap<String, Object> readProperties() {
-        InputStream inputStream = null;
-        InputStreamReader inputStreamReader = null;
+        FileReader fileReader = null;
         BufferedReader reader = null;
 
         try {
-            inputStream = Main.class.getResourceAsStream("/resources/protocols/" + Main.getInstance().getReplayData().getProtocolVersion() + ".bob");
-            inputStreamReader = new InputStreamReader(inputStream);
-            reader = new BufferedReader(inputStreamReader);
-        } catch (Exception e) {
+            fileReader = new FileReader(OS.getBobFolder() + "resources/assets/protocols/" + Main.getInstance().getReplayData().getProtocolVersion() + ".bob");
+            reader = new BufferedReader(fileReader);
+        } catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(null, "Cannot find protocol version " + Main.getInstance().getReplayData().getProtocolVersion() + "! (that version might not be supported)");
             System.exit(-1);
         }
@@ -233,8 +229,7 @@ public class PacketReader {
 
         try {
             reader.close();
-            inputStreamReader.close();
-            inputStream.close();
+            fileReader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

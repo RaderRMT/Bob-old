@@ -8,12 +8,8 @@ public class OS {
 
     public static String getBobFolder() {
         if(BobSettings.getWorkingDirectory() == null) {
-            switch(getOS()) {
-                case "windows":
-                case "macos":
-                case "linux": return System.getProperty("user.home") + "/.bob/";
-                default: return null;
-            }
+            if(getOS() != null) return System.getProperty("user.home") + "/.bob/";
+            else return null;
         } else {
             return BobSettings.getWorkingDirectory();
         }
