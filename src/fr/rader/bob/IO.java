@@ -11,19 +11,29 @@ import java.nio.file.Files;
 
 public class IO {
 
-    public static File openFilePrompt() {
-        JFileChooser fileChooser = new JFileChooser(OS.getMinecraftFolder() + "replay_recordings/");
+    public static File openFilePrompt(String description, String path, String... extensions) {
+        JFileChooser fileChooser = new JFileChooser(path);
         fileChooser.setAcceptAllFileFilterUsed(false);
         fileChooser.setMultiSelectionEnabled(false);
         fileChooser.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File file) {
-                return file.isDirectory() || file.getName().endsWith(".mcpr");
+                for(String extension : extensions) {
+                    if(file.getName().endsWith(extension)) return true;
+                }
+
+                return file.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "Replay File (*.mcpr)";
+                String finalDescription = description + " (";
+
+                for(int i = 0; i < extensions.length; i++) {
+                    finalDescription += "*." + extensions[i] + ((i < extensions.length - 1) ? ", " : ")");
+                }
+
+                return finalDescription;
             }
         });
 

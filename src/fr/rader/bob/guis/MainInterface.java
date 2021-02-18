@@ -41,7 +41,7 @@ public class MainInterface {
     private DefaultTreeModel treeModel;
     private PacketReader packetReader;
 
-    private Canvas engineCanvas = new Canvas();
+    private Canvas engineCanvas;
 
     public MainInterface() {
         instance = this;
@@ -69,6 +69,8 @@ public class MainInterface {
         PacketCellRenderer cellRenderer = new PacketCellRenderer();
         dataTree = new JTree(treeModel);
         dataTree.setCellRenderer(cellRenderer);
+
+        engineCanvas = new Canvas();
 
         // minimum size for canvas (240p here)
         engineCanvas.setMinimumSize(new Dimension(320, 240));
@@ -149,14 +151,14 @@ public class MainInterface {
 
         MenuBarListener listener = new MenuBarListener();
 
-        JMenuItem closeProject = new JMenuItem("Close Project");
+        //JMenuItem closeProject = new JMenuItem("Close Project");
         JMenuItem openProjectFolder = new JMenuItem("Open Project Folder");
         JMenuItem test = new JMenuItem("test");
-        closeProject.addActionListener(listener);
+        //closeProject.addActionListener(listener);
         openProjectFolder.addActionListener(listener);
         test.addActionListener(listener);
 
-        fileMenu.add(closeProject);
+        //fileMenu.add(closeProject);
         fileMenu.add(openProjectFolder);
         fileMenu.add(test);
 
@@ -215,18 +217,19 @@ class MenuBarListener implements ActionListener {
         Main main = Main.getInstance();
 
         switch(((JMenuItem) e.getSource()).getText()) {
-            case "Close Project":
-                // remove last project
-                main.getSettings().setProperty("lastProject", "");
-                main.getSettings().saveSettings();
-
-                // close window
-                MainInterface.getInstance().savePreferences();
-                MainInterface.getInstance().frame.dispose();
-
-                // recall the start method
-                main.start();
-                break;
+//            case "Close Project":
+//                // remove last project
+//                main.getSettings().setProperty("lastProject", "");
+//                main.getSettings().saveSettings();
+//
+//                // close window
+//                MainInterface.getInstance().savePreferences();
+//                Engine.setRunning(false);
+//                MainInterface.getInstance().frame.dispose();
+//
+//                // recall the start method
+//                main.start();
+//                break;
             case "Open Project Folder":
                 try {
                     Runtime.getRuntime().exec("explorer.exe /root," + main.getReplayData().getProject());

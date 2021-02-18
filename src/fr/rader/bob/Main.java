@@ -2,6 +2,8 @@ package fr.rader.bob;
 
 import fr.rader.bob.guis.MainInterface;
 import fr.rader.bob.guis.ProjectSelector;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 
 import javax.swing.*;
 import java.io.*;
@@ -60,9 +62,25 @@ public class Main {
             e.printStackTrace();
         }
 
-        System.setProperty("org.lwjgl.librarypath", OS.getBobFolder() + "natives/" + OS.getLWJGLNativeOS());
+        verifyRequiredFiles();
+
+        System.setProperty("org.lwjgl.librarypath", OS.getBobFolder() + "resources/natives/" + OS.getOS());
 
         start();
+    }
+
+    private void verifyRequiredFiles() {
+        if(!new File(OS.getBobFolder() + "resources/").exists()) {
+            try {
+                File file = IO.openFilePrompt("Resources ZIP", null, "zip");
+                if(file == null) System.exit(-1);
+
+                ZipFile resourcesZip = new ZipFile(file);
+                resourcesZip.extractAll(OS.getBobFolder() + "resources/");
+            } catch (ZipException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public BobSettings getSettings() {

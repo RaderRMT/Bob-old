@@ -33,7 +33,7 @@ public class ReplayData {
         }
 
         if(!alreadyHasReplay) {
-            this.replay = IO.openFilePrompt();
+            this.replay = IO.openFilePrompt("Replay File", OS.getMinecraftFolder() + "replay_recordings/", "mcpr");
         }
 
         if(replay == null) {

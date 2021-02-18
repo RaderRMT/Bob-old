@@ -7,8 +7,8 @@ import org.lwjgl.util.vector.Matrix4f;
 
 public class StaticShader extends ShaderProgram {
 
-    private static final String FRAGMENT_FILE = OS.getBobFolder() + "assets/shaders/fragmentShader.glsl";
-    private static final String VERTEX_FILE = OS.getBobFolder() + "assets/shaders/vertexShader.glsl";
+    private static final String FRAGMENT_FILE = OS.getBobFolder() + "resources/assets/shaders/fragmentShader.glsl";
+    private static final String VERTEX_FILE = OS.getBobFolder() + "resources/assets/shaders/vertexShader.glsl";
 
     private int location_transformationMatrix;
     private int location_projectionMatrix;
