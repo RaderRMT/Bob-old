@@ -14,7 +14,7 @@ public class Engine {
         DisplayManager.createDisplay(parent, width, height);
         Loader loader = new Loader();
 
-        Block block = new Block(1, 1, 1, 1, 1, 1);
+        Block block = new Block(3, 3, 3, 3, 0, 2);
         AtlasTexture texture = new AtlasTexture(loader.loadTexture("atlas"));
 
         TexturedModel texturedModel = new TexturedModel(texture, block.getRawModel(loader));

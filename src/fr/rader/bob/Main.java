@@ -50,8 +50,8 @@ public class Main {
         File project = new File(BobSettings.getWorkingDirectory() + "/projects/" + projectName);
 
         replayData = new ReplayData(project);
-        //MainInterface mainInterface = new MainInterface();
-        //mainInterface.createWindow();
+        MainInterface mainInterface = new MainInterface();
+        mainInterface.createWindow();
     }
 
     public static void main(String[] args) {
