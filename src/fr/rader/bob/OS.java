@@ -26,7 +26,7 @@ public class OS {
 
     public static String getMinecraftFolder() {
         switch(getOS()) {
-            case "windows":
+            case "windows": return System.getenv("appdata") + "/.minecraft/";
             case "linux": return System.getProperty("user.home") + "/.minecraft/";
             case "macos": return System.getProperty("user.home") + "/Library/Application Support/minecraft/";
             default: return null;
