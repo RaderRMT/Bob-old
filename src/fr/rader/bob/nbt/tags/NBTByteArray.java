@@ -1,6 +1,6 @@
 package fr.rader.bob.nbt.tags;
 
-import fr.rader.bob.DataWriter;
+import fr.rader.bob.utils.DataWriter;
 
 public class NBTByteArray extends NBTBase {
 

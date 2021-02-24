@@ -1,4 +1,4 @@
-package fr.rader.bob;
+package fr.rader.bob.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

@@ -2,16 +2,13 @@ package fr.rader.bob;
 
 import fr.rader.bob.guis.MainInterface;
 import fr.rader.bob.guis.ProjectSelector;
-import fr.rader.bob.nbt.editor.NBTEditor;
-import fr.rader.bob.nbt.tags.NBTCompound;
-import fr.rader.bob.nbt.tags.NBTList;
-import fr.rader.bob.packet.PacketReader;
+import fr.rader.bob.utils.IO;
+import fr.rader.bob.utils.OS;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
 import javax.swing.*;
 import java.io.*;
-import java.nio.file.Files;
 
 public class Main {
 
@@ -20,6 +17,8 @@ public class Main {
     private ReplayData replayData;
     private BobSettings settings;
     private Projects projects;
+
+    private String accessToken;
 
     public static Main getInstance() {
         return instance;
@@ -52,6 +51,31 @@ public class Main {
         replayData = new ReplayData(project);
         MainInterface mainInterface = new MainInterface();
         mainInterface.createWindow();
+
+        /*try {
+            DataReader reader = new DataReader(Files.readAllBytes(replayData.getRecording().toPath()));
+
+            reader.readInt();
+            int len = reader.readInt();
+            reader.readVarInt();
+            reader.readFollowingBytes(len - 1);
+
+            do {
+                int timestamp = reader.readInt();
+                int size = reader.readInt();
+                int packetID = reader.readVarInt();
+
+                if(packetID == 0x38) {
+                    PacketReader packetReader = new PacketReader(0x38);
+                    //packetReader.deserializePacket(reader.readFollowingBytes(size - 1));
+                    return;
+                } else {
+                    reader.addOffset(size - 1);
+                }
+            } while(reader.getOffset() != reader.getDataLength());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
     }
 
     public static void main(String[] args) {

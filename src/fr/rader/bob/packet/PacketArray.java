@@ -43,6 +43,10 @@ public class PacketArray {
         this.arrayData = arrayData;
     }
 
+    public boolean isInlineArray() {
+        return type != null;
+    }
+
     @Override
     public String toString() {
         return "PacketArray{" +

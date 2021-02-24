@@ -1,5 +1,6 @@
-package fr.rader.bob;
+package fr.rader.bob.utils;
 
+import fr.rader.bob.BobSettings;
 import org.lwjgl.LWJGLUtil;
 
 public class OS {

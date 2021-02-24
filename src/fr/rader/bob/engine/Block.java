@@ -2,6 +2,7 @@ package fr.rader.bob.engine;
 
 import fr.rader.bob.engine.engine.Loader;
 import fr.rader.bob.engine.engine.RawModel;
+import fr.rader.bob.engine.engine.TexturedModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,5 +64,9 @@ public class Block {
 
     public RawModel getRawModel(Loader loader) {
         return loader.loadToVAO(getModel().getVertices(), getTextureCoords(), getModel().getIndices());
+    }
+
+    public TexturedModel getTexturedModel(Loader loader) {
+        return new TexturedModel(Engine.getAtlasTexture(), getRawModel(loader));
     }
 }

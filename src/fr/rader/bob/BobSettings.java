@@ -2,6 +2,9 @@ package fr.rader.bob;
 
 import fr.rader.bob.nbt.tags.NBTBase;
 import fr.rader.bob.nbt.tags.NBTCompound;
+import fr.rader.bob.utils.DataReader;
+import fr.rader.bob.utils.IO;
+import fr.rader.bob.utils.OS;
 
 import java.io.*;
 import java.nio.file.Files;

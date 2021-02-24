@@ -1,6 +1,6 @@
 package fr.rader.bob.guis;
 
-import fr.rader.bob.IO;
+import fr.rader.bob.utils.IO;
 import fr.rader.bob.Main;
 import fr.rader.bob.ReplayData;
 import fr.rader.bob.engine.Engine;

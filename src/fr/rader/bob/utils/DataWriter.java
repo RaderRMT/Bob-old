@@ -1,4 +1,4 @@
-package fr.rader.bob;
+package fr.rader.bob.utils;
 
 import fr.rader.bob.nbt.tags.NBTCompound;
 import fr.rader.bob.types.Position;

@@ -4,6 +4,8 @@ import fr.rader.bob.nbt.tags.NBTBase;
 import fr.rader.bob.nbt.tags.NBTCompound;
 import fr.rader.bob.nbt.tags.NBTList;
 import fr.rader.bob.nbt.tags.NBTString;
+import fr.rader.bob.utils.DataReader;
+import fr.rader.bob.utils.IO;
 
 import javax.swing.*;
 import java.io.File;

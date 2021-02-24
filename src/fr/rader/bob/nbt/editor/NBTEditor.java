@@ -1,6 +1,6 @@
 package fr.rader.bob.nbt.editor;
 
-import fr.rader.bob.OS;
+import fr.rader.bob.utils.OS;
 import fr.rader.bob.nbt.tags.*;
 
 import javax.swing.*;

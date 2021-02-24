@@ -1,6 +1,6 @@
 package fr.rader.bob.engine.engine.shader;
 
-import fr.rader.bob.OS;
+import fr.rader.bob.utils.OS;
 import fr.rader.bob.engine.engine.Camera;
 import fr.rader.bob.engine.engine.Maths;
 import org.lwjgl.util.vector.Matrix4f;

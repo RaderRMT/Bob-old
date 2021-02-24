@@ -14,24 +14,25 @@ public class Camera {
     }
 
     public void move() {
+        // todo: change hardcoded keybinds to use a map instead
         if(Keyboard.isKeyDown(Keyboard.KEY_Z)) {
-            position.z -= Math.cos(Math.toRadians(yaw)) * .1f;
             position.x += Math.sin(Math.toRadians(yaw)) * .1f;
-        }
-
-        if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
-            position.z += Math.cos(Math.toRadians(yaw)) * .1f;
-            position.x -= Math.sin(Math.toRadians(yaw)) * .1f;
-        }
-
-        if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
-            position.z += Math.sin(Math.toRadians(yaw)) * .1f;
-            position.x += Math.cos(Math.toRadians(yaw)) * .1f;
+            position.z -= Math.cos(Math.toRadians(yaw)) * .1f;
         }
 
         if(Keyboard.isKeyDown(Keyboard.KEY_Q)) {
-            position.z -= Math.sin(Math.toRadians(yaw)) * .1f;
             position.x -= Math.cos(Math.toRadians(yaw)) * .1f;
+            position.z -= Math.sin(Math.toRadians(yaw)) * .1f;
+        }
+
+        if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
+            position.x -= Math.sin(Math.toRadians(yaw)) * .1f;
+            position.z += Math.cos(Math.toRadians(yaw)) * .1f;
+        }
+
+        if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
+            position.x += Math.cos(Math.toRadians(yaw)) * .1f;
+            position.z += Math.sin(Math.toRadians(yaw)) * .1f;
         }
 
         if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
@@ -43,11 +44,11 @@ public class Camera {
         }
 
         if(Mouse.isButtonDown(1)) {
-            yaw += Mouse.getDX() * 0.1f;
+            yaw += Mouse.getDX() * 0.15f;
             if(yaw >= 360) yaw -= 360;
             if(yaw <= 0) yaw += 360;
 
-            pitch += -Mouse.getDY() * 0.1f;
+            pitch += -Mouse.getDY() * 0.15f;
             if(pitch >= 90) pitch = 90;
             if(pitch <= -90) pitch = -90;
         }

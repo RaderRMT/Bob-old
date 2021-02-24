@@ -1,7 +1,7 @@
 package fr.rader.bob.nbt.tags;
 
-import fr.rader.bob.DataReader;
-import fr.rader.bob.DataWriter;
+import fr.rader.bob.utils.DataReader;
+import fr.rader.bob.utils.DataWriter;
 
 public class NBTShort extends NBTBase {
 

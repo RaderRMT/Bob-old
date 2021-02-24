@@ -1,15 +1,11 @@
 package fr.rader.bob.packet;
 
-import fr.rader.bob.DataReader;
 import fr.rader.bob.Main;
-import fr.rader.bob.OS;
+import fr.rader.bob.utils.OS;
 
 import javax.swing.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PacketReader {
 
@@ -43,9 +39,8 @@ public class PacketReader {
     private final int packetID;
 
     private LinkedHashMap<String, Object> properties;
+    private LinkedHashMap<String, Object> variables;
     private List<String> variablesList;
-
-    private byte i = -1;
 
     public PacketReader(int packetID) {
         this.packetID = packetID;
@@ -55,10 +50,46 @@ public class PacketReader {
         properties = readProperties();
 
         // becomes a stack
-        variablesList = new ArrayList<>();
+        variablesList = null;
 
         //System.out.println(properties);
     }
+
+    /*public LinkedHashMap<String, Object> deserializePacket(byte[] rawData) {
+        variables = new LinkedHashMap<>();
+        LinkedHashMap<String, Object> data = deserializeMap(properties, new DataReader(rawData));
+
+        for(byte value : rawData) System.out.print(String.format("%1$02X", value) + " ");
+        System.out.println("\n" + variables);
+
+        variables = null;
+        return data;
+    }
+
+    private LinkedHashMap<String, Object> deserializeMap(LinkedHashMap<String, Object> map, DataReader reader) {
+        LinkedHashMap<String, Object> out = new LinkedHashMap<>();
+
+        for(Map.Entry<String, Object> entry : map.entrySet()) {
+            if(entry.getValue() instanceof PacketArray) {
+                PacketArray array = ((PacketArray) entry.getValue());
+
+                if(array.isInlineArray()) {
+
+                } else {
+                    out.put(entry.getKey(), deserializeMap(array.getArrayData(), reader));
+                }
+            } else if(entry.getValue() instanceof PacketMatch) {
+                PacketMatch match = ((PacketMatch) entry.getValue());
+            } else if(entry.getValue() instanceof PacketCondition) {
+                PacketCondition condition = ((PacketCondition) entry.getValue());
+            } else {
+                String variable = entry.getKey();
+                variables.put(variable, getData(getDataType(variable, properties), reader));
+            }
+        }
+
+        return out;
+    }*/
 
     /*public LinkedHashMap<String, Object> deserializePacket(byte[] rawData) {
         return deserializeMap(properties, new DataReader(rawData));

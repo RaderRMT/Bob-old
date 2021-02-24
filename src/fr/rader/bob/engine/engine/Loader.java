@@ -1,6 +1,6 @@
 package fr.rader.bob.engine.engine;
 
-import fr.rader.bob.OS;
+import fr.rader.bob.utils.OS;
 import org.lwjgl.BufferUtils;
 
 import java.io.FileInputStream;
