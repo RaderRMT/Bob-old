@@ -8,10 +8,6 @@ public class PacketBase {
         return name;
     }
 
-    public PacketData getAsPacketData() {
-        return (PacketData) this;
-    }
-
     public PacketVariable getAsPacketVariable() {
         return (PacketVariable) this;
     }
