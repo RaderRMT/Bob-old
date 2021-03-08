@@ -7,7 +7,7 @@ import fr.rader.bob.engine.Engine;
 import fr.rader.bob.guis.editor.PacketCell;
 import fr.rader.bob.nbt.tags.NBTCompound;
 import fr.rader.bob.packet.Packet;
-import fr.rader.bob.packet.PacketReader;
+import fr.rader.bob.packet.reader.PacketReader;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;

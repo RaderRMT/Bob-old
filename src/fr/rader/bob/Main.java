@@ -2,6 +2,11 @@ package fr.rader.bob;
 
 import fr.rader.bob.guis.MainInterface;
 import fr.rader.bob.guis.ProjectSelector;
+import fr.rader.bob.packet.Packet;
+import fr.rader.bob.packet.reader.PacketArray;
+import fr.rader.bob.packet.reader.PacketReader;
+import fr.rader.bob.utils.DataReader;
+import fr.rader.bob.utils.DataWriter;
 import fr.rader.bob.utils.IO;
 import fr.rader.bob.utils.OS;
 import net.lingala.zip4j.ZipFile;
@@ -9,6 +14,7 @@ import net.lingala.zip4j.exception.ZipException;
 
 import javax.swing.*;
 import java.io.*;
+import java.nio.file.Files;
 
 public class Main {
 
@@ -49,10 +55,10 @@ public class Main {
         File project = new File(BobSettings.getWorkingDirectory() + "/projects/" + projectName);
 
         replayData = new ReplayData(project);
-        MainInterface mainInterface = new MainInterface();
-        mainInterface.createWindow();
+        //MainInterface mainInterface = new MainInterface();
+        //mainInterface.createWindow();
 
-        /*try {
+        try {
             DataReader reader = new DataReader(Files.readAllBytes(replayData.getRecording().toPath()));
 
             reader.readInt();
@@ -67,7 +73,8 @@ public class Main {
 
                 if(packetID == 0x38) {
                     PacketReader packetReader = new PacketReader(0x38);
-                    //packetReader.deserializePacket(reader.readFollowingBytes(size - 1));
+                    Packet packet = new Packet(reader.readFollowingBytes(size - 1), 0x38);
+                    System.out.println(packetReader.deserializePacket(packet));
                     return;
                 } else {
                     reader.addOffset(size - 1);
@@ -75,7 +82,7 @@ public class Main {
             } while(reader.getOffset() != reader.getDataLength());
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     public static void main(String[] args) {
