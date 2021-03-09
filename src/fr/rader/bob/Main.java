@@ -15,6 +15,7 @@ import net.lingala.zip4j.exception.ZipException;
 import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.Arrays;
 
 public class Main {
 
@@ -74,7 +75,9 @@ public class Main {
                 if(packetID == 0x38) {
                     PacketReader packetReader = new PacketReader(0x38);
                     Packet packet = new Packet(reader.readFollowingBytes(size - 1), 0x38);
-                    System.out.println(packetReader.deserializePacket(packet));
+                    Packet newPacket = packetReader.serializePacket(packetReader.deserializePacket(packet));
+
+                    System.out.println(Arrays.equals(packet.getRawData(), newPacket.getRawData()));
                     return;
                 } else {
                     reader.addOffset(size - 1);

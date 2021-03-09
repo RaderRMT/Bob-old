@@ -53,6 +53,10 @@ public class PacketMatch extends PacketBase {
         return boundVariable;
     }
 
+    public ArrayList<PacketBase> getData() {
+        return data;
+    }
+
     @Override
     public String toString() {
         return "PacketMatch{" +

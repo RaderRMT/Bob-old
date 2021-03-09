@@ -1,8 +1,11 @@
 package fr.rader.bob.packet.reader;
 
 import fr.rader.bob.Main;
+import fr.rader.bob.nbt.tags.NBTCompound;
 import fr.rader.bob.packet.Packet;
+import fr.rader.bob.types.Position;
 import fr.rader.bob.utils.DataReader;
+import fr.rader.bob.utils.DataWriter;
 import fr.rader.bob.utils.OS;
 
 import javax.swing.*;
@@ -11,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class PacketReader {
 
@@ -51,7 +55,7 @@ public class PacketReader {
 
         properties = readProperties();
 
-        System.out.println(properties);
+        //System.out.println(properties);
     }
 
     public ArrayList<PacketBase> deserializePacket(Packet packet) {
@@ -172,6 +176,9 @@ public class PacketReader {
             case "nbt": return reader.readNBT();
             case "position": return reader.readPosition();
             case "uuid": return reader.readUUID();
+            // todo:
+            //  metadata
+            //  slot
             default:
                 System.out.println("getValue: unknown type \"" + type + "\"");
                 break;
@@ -181,7 +188,58 @@ public class PacketReader {
     }
 
     public Packet serializePacket(ArrayList<PacketBase> packetData) {
-        return null;
+        DataWriter writer = new DataWriter();
+
+        serializeArray(packetData, writer);
+
+        return new Packet(writer.getData(), packetID);
+    }
+
+    private void serializeArray(ArrayList<PacketBase> packetData, DataWriter writer) {
+        for(PacketBase base : packetData) {
+            if(base instanceof PacketVariable) {
+                writeValue(writer, ((PacketVariable) base).getValue(), ((PacketVariable) base).getType());
+            }
+
+            if(base instanceof PacketArray) {
+                serializeArray(((PacketArray) base).getData(), writer);
+            }
+
+            if(base instanceof PacketMatch) {
+                serializeArray(((PacketMatch) base).getData(), writer);
+            }
+
+            if(base instanceof PacketCondition) {
+                serializeArray(((PacketCondition) base).getData(), writer);
+            }
+        }
+    }
+
+    private void writeValue(DataWriter writer, Object object, String type) {
+        switch(type) {
+            case "boolean": writer.writeBoolean((Boolean) object); break;
+            case "angle":
+            case "byte": writer.writeByte((Integer) object); break;
+            case "short": writer.writeShort((Integer) object); break;
+            case "int": writer.writeInt((Integer) object); break;
+            case "long": writer.writeLong((Long) object); break;
+            case "float": writer.writeFloat((Float) object); break;
+            case "double": writer.writeDouble((Double) object); break;
+            case "chat":
+            case "identifier":
+            case "string":
+                writer.writeVarInt(((String) object).length());
+                writer.writeString((String) object);
+                break;
+            case "varint": writer.writeVarInt((Integer) object); break;
+            case "varlong": writer.writeVarLong((Long) object); break;
+            case "nbt": writer.writeNBT((NBTCompound) object); break;
+            case "position": writer.writePosition((Position) object); break;
+            case "uuid": writer.writeUUID((UUID) object); break;
+            // todo:
+            //  metadata
+            //  slot
+        }
     }
 
     private ArrayList<PacketBase> readProperties() {
