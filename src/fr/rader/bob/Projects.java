@@ -5,7 +5,9 @@ import fr.rader.bob.nbt.tags.NBTCompound;
 import fr.rader.bob.nbt.tags.NBTList;
 import fr.rader.bob.nbt.tags.NBTString;
 import fr.rader.bob.utils.DataReader;
+import fr.rader.bob.utils.DataWriter;
 import fr.rader.bob.utils.IO;
+import fr.rader.bob.utils.StreamConverter;
 
 import javax.swing.*;
 import java.io.File;
@@ -36,40 +38,6 @@ public class Projects {
         readProjects();
     }
 
-    public List<String> getProjectsNames() {
-        return projects;
-    }
-
-    public List<File> getProjectsFiles() {
-        List<File> out = new ArrayList<>();
-
-        for(String name : projects) {
-            out.add(new File(BobSettings.getWorkingDirectory() + "/projects/" + name));
-        }
-
-        return out;
-    }
-
-    public void removeProject(String projectName) {
-        if(projects.contains(projectName)) {
-            projects.remove(projectName);
-
-            deleteDirectory(new File(BobSettings.getWorkingDirectory() + "/projects/" + projectName));
-        } else {
-            JOptionPane.showMessageDialog(null, "The project \"" + projectName + "\" does not exists");
-        }
-    }
-
-    public void addProject(String projectName) {
-        if(!projects.contains(projectName)) {
-            projects.add(projectName);
-
-            initFolders(projectName);
-        } else {
-            JOptionPane.showMessageDialog(null, "A project already exists with the name \"" + projectName + "\"");
-        }
-    }
-
     public void saveProjects() {
         NBTCompound tag = new NBTCompound("").addList("projects", new NBTList("projects", 0x08));
 
@@ -77,7 +45,10 @@ public class Projects {
             tag.getComponent("projects").getAsList().addString(name);
         }
 
-        IO.writeBinaryFile(projectsFile, tag.toByteArray());
+        DataWriter writer = new DataWriter();
+        tag.writeNBT(writer);
+
+        IO.writeFile(projectsFile, StreamConverter.toInputStream(writer.getStream()));
     }
 
     private void readProjects() {
@@ -95,6 +66,26 @@ public class Projects {
         }
     }
 
+    public void addProject(String projectName) {
+        if(!projects.contains(projectName)) {
+            projects.add(projectName);
+
+            initFolders(projectName);
+        } else {
+            JOptionPane.showMessageDialog(null, "A project already exists with the name \"" + projectName + "\"");
+        }
+    }
+
+    public void removeProject(String projectName) {
+        if(projects.contains(projectName)) {
+            projects.remove(projectName);
+
+            IO.deleteDirectory(new File(BobSettings.getWorkingDirectory() + "/projects/" + projectName));
+        } else {
+            JOptionPane.showMessageDialog(null, "The project \"" + projectName + "\" does not exists");
+        }
+    }
+
     private void initFolders(String projectName) {
         String projectFolder = BobSettings.getWorkingDirectory() + "/projects/" + projectName;
 
@@ -102,22 +93,17 @@ public class Projects {
         if(!file.exists()) file.mkdirs();
     }
 
-    private void deleteDirectory(File directory) {
-        if(directory.exists()) {
-            if(!directory.isDirectory()) return;
+    public List<String> getProjectsNames() {
+        return projects;
+    }
 
-            File[] files = directory.listFiles();
-            if(files != null) {
-                for(File file : files) {
-                    if(file.isDirectory()) {
-                        deleteDirectory(file);
-                    } else {
-                        file.delete();
-                    }
-                }
-            }
+    public List<File> getProjectsFiles() {
+        List<File> out = new ArrayList<>();
+
+        for(String name : projects) {
+            out.add(new File(BobSettings.getWorkingDirectory() + "/projects/" + name));
         }
 
-        directory.delete();
+        return out;
     }
 }

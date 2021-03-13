@@ -1,5 +1,6 @@
 package fr.rader.bob.guis;
 
+import fr.rader.bob.utils.DataWriter;
 import fr.rader.bob.utils.IO;
 import fr.rader.bob.Main;
 import fr.rader.bob.ReplayData;
@@ -8,6 +9,7 @@ import fr.rader.bob.guis.editor.PacketCell;
 import fr.rader.bob.nbt.tags.NBTCompound;
 import fr.rader.bob.packet.Packet;
 import fr.rader.bob.packet.reader.PacketReader;
+import fr.rader.bob.utils.StreamConverter;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -54,7 +56,10 @@ public class MainInterface {
                     .addInt("hsdl", 930)
                     .addInt("vsdl", 530);
 
-            IO.writeBinaryFile(preferences, nbt.toByteArray());
+            DataWriter writer = new DataWriter();
+            nbt.writeNBT(writer);
+
+            IO.writeFile(preferences, StreamConverter.toInputStream(writer.getStream()));
         } else {
             nbt = IO.readNBTFile(preferences);
         }
@@ -141,7 +146,10 @@ public class MainInterface {
         nbt.getComponent("hsdl").getAsNBTInt().setValue(horizontalSplit.getDividerLocation());
         nbt.getComponent("vsdl").getAsNBTInt().setValue(verticalSplit.getDividerLocation());
 
-        IO.writeBinaryFile(preferences, nbt.toByteArray());
+        DataWriter writer = new DataWriter();
+        nbt.writeNBT(writer);
+
+        IO.writeFile(preferences, StreamConverter.toInputStream(writer.getStream()));
     }
 
     private JMenuBar addMenuBar() {

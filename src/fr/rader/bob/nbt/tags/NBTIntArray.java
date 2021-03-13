@@ -2,6 +2,8 @@ package fr.rader.bob.nbt.tags;
 
 import fr.rader.bob.utils.DataWriter;
 
+import java.io.IOException;
+
 public class NBTIntArray extends NBTBase {
 
     private int[] value;
@@ -25,10 +27,7 @@ public class NBTIntArray extends NBTBase {
         this.value = value;
     }
 
-    @Override
-    public byte[] toByteArray() {
-        DataWriter writer = new DataWriter();
-
+    public void writeNBT(DataWriter writer) {
         if(getName() != null) {
             writer.writeByte(getId());
             writer.writeShort(getName().length());
@@ -37,7 +36,5 @@ public class NBTIntArray extends NBTBase {
 
         writer.writeInt(value.length);
         writer.writeIntArray(value);
-
-        return writer.getData();
     }
 }

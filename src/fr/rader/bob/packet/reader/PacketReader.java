@@ -4,15 +4,13 @@ import fr.rader.bob.Main;
 import fr.rader.bob.nbt.tags.NBTCompound;
 import fr.rader.bob.packet.Packet;
 import fr.rader.bob.types.Position;
+import fr.rader.bob.types.Slot;
 import fr.rader.bob.utils.DataReader;
 import fr.rader.bob.utils.DataWriter;
 import fr.rader.bob.utils.OS;
 
 import javax.swing.*;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -55,7 +53,7 @@ public class PacketReader {
 
         properties = readProperties();
 
-        //System.out.println(properties);
+        System.out.println(properties);
     }
 
     public ArrayList<PacketBase> deserializePacket(Packet packet) {
@@ -96,7 +94,7 @@ public class PacketReader {
                     }
                 }
 
-                out.add(array);
+                if(!array.getData().isEmpty()) out.add(array);
             }
 
             if(base instanceof PacketMatch) {
@@ -110,7 +108,7 @@ public class PacketReader {
                     match.set(deserializePacketData(matchDataArray, reader));
                 }
 
-                out.add(match);
+                if(!match.getData().isEmpty()) out.add(match);
             }
 
             if(base instanceof PacketCondition) {
@@ -118,7 +116,7 @@ public class PacketReader {
 
                 PacketCondition condition = new PacketCondition(conditionBase);
                 if(condition.getValueToCompare() instanceof Boolean) {
-                    if(getGlobalValue(globalVariables, conditionBase.getConditionVariable()) == condition.getValueToCompare()) {
+                    if((boolean) getGlobalValue(globalVariables, conditionBase.getConditionVariable()) == (boolean) condition.getValueToCompare()) {
                         condition.setData(deserializePacketData(conditionBase.getData(), reader));
                     }
                 } else {
@@ -126,7 +124,9 @@ public class PacketReader {
                     int valueToCompare = (int) condition.getValueToCompare();
                     switch(condition.getConditionType()) {
                         case "==":
-                            if(conditionVariableValue == valueToCompare) condition.setData(deserializePacketData(conditionBase.getData(), reader));
+                            if(conditionVariableValue == valueToCompare) {
+                                condition.setData(deserializePacketData(conditionBase.getData(), reader));
+                            }
                             break;
                         case "<=":
                             if(conditionVariableValue <= valueToCompare) condition.setData(deserializePacketData(conditionBase.getData(), reader));
@@ -143,14 +143,14 @@ public class PacketReader {
                     }
                 }
 
-                out.add(condition);
+                if(!condition.getData().isEmpty()) out.add(condition);
             }
         }
 
         return out;
     }
 
-    public Object getGlobalValue(ArrayList<PacketVariable> list, String globalName) {
+    private Object getGlobalValue(ArrayList<PacketVariable> list, String globalName) {
         for(PacketVariable base : list) {
             if(base.getName().equals(globalName)) return base.getValue();
         }
@@ -159,29 +159,33 @@ public class PacketReader {
     }
 
     private Object getValue(DataReader reader, String type) {
-        switch(type) {
-            case "boolean": return reader.readBoolean();
-            case "angle":
-            case "byte": return reader.readByte() & 0xff;
-            case "short": return reader.readShort() & 0xffff;
-            case "int": return reader.readInt();
-            case "long": return reader.readLong();
-            case "float": return reader.readFloat();
-            case "double": return reader.readDouble();
-            case "chat":
-            case "identifier":
-            case "string": return reader.readString(reader.readVarInt());
-            case "varint": return reader.readVarInt();
-            case "varlong": return reader.readVarLong();
-            case "nbt": return reader.readNBT();
-            case "position": return reader.readPosition();
-            case "uuid": return reader.readUUID();
-            // todo:
-            //  metadata
-            //  slot
-            default:
-                System.out.println("getValue: unknown type \"" + type + "\"");
-                break;
+        try {
+            switch(type) {
+                case "boolean": return reader.readBoolean();
+                case "angle":
+                case "byte": return reader.readByte();
+                case "short": return reader.readShort();
+                case "int": return reader.readInt();
+                case "long": return reader.readLong();
+                case "float": return reader.readFloat();
+                case "double": return reader.readDouble();
+                case "chat":
+                case "identifier":
+                case "string": return reader.readString(reader.readVarInt());
+                case "varint": return reader.readVarInt();
+                case "varlong": return reader.readVarLong();
+                case "nbt": return reader.readNBT();
+                case "position": return reader.readPosition();
+                case "uuid": return reader.readUUID();
+                case "slot": return reader.readSlot();
+                // todo:
+                //  metadata
+                default:
+                    System.out.println("getValue: unknown type \"" + type + "\"");
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return null;
@@ -191,6 +195,8 @@ public class PacketReader {
         DataWriter writer = new DataWriter();
 
         serializeArray(packetData, writer);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         return new Packet(writer.getData(), packetID);
     }
@@ -233,12 +239,12 @@ public class PacketReader {
                 break;
             case "varint": writer.writeVarInt((Integer) object); break;
             case "varlong": writer.writeVarLong((Long) object); break;
-            case "nbt": writer.writeNBT((NBTCompound) object); break;
+            case "nbt": ((NBTCompound) object).writeNBT(writer); break;
             case "position": writer.writePosition((Position) object); break;
             case "uuid": writer.writeUUID((UUID) object); break;
+            case "slot": writer.writeSlot((Slot) object); break;
             // todo:
             //  metadata
-            //  slot
         }
     }
 

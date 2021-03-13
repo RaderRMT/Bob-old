@@ -1,24 +1,33 @@
 package fr.rader.bob.utils;
 
-import fr.rader.bob.nbt.tags.NBTCompound;
+import fr.rader.bob.Main;
 import fr.rader.bob.types.Position;
+import fr.rader.bob.types.Slot;
 
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class DataWriter {
 
-    private List<Byte> data;
+    private ByteArrayOutputStream outputStream;
+
+    private byte[] buffer = new byte[16384];
+    private int index = 0;
 
     public DataWriter() {
-        this.data = new ArrayList<>();
+        outputStream = new ByteArrayOutputStream();
     }
 
     public void writeByte(int value) {
-        data.add((byte) value);
+        if(index == buffer.length) {
+            outputStream.write(buffer, 0, index);
+            index = 0;
+        }
+
+        buffer[index] = (byte) (value & 0xff);
+        index++;
     }
 
     public void writeShort(int value) {
@@ -36,71 +45,10 @@ public class DataWriter {
         writeInt((int) value);
     }
 
-    public void writeFloat(float value) {
-        writeByteArray(ByteBuffer.allocate(4).putFloat(value).array());
-    }
-
-    public void writeDouble(double value) {
-        writeByteArray(ByteBuffer.allocate(8).putDouble(value).array());
-    }
-
-    public void writeBoolean(boolean value) {
-        writeByte(value ? 0x01 : 0x00);
-    }
-
-    public void writeVarInt(int value) {
-        do {
-            byte temp = (byte) (value & 0b01111111);
-            value >>>= 7;
-
-            if(value != 0) {
-                temp |= 0b10000000;
-            }
-
-            writeByte(temp);
-        } while (value != 0);
-    }
-
-    public void writeVarLong(long value) {
-        do {
-            byte temp = (byte)(value & 0b01111111);
-            value >>>= 7;
-
-            if(value != 0) {
-                temp |= 0b10000000;
-            }
-
-            writeByte(temp);
-        } while (value != 0);
-    }
-
-    public void writeString(String value) {
-        writeByteArray(value.getBytes(StandardCharsets.UTF_8));
-    }
-
-    public void writeAsciiChar(char value) {
-        writeByte(value);
-    }
-
     public void writeByteArray(byte[] values) {
         for(byte value : values) {
             writeByte(value);
         }
-    }
-
-    public void writeNBT(NBTCompound nbt) {
-        if(nbt == null) writeByte(0x00);
-        else writeByteArray(nbt.toByteArray());
-    }
-
-    public byte[] getData() {
-        byte[] out = new byte[data.size()];
-
-        for(int i = 0; i < out.length; i++) {
-            out[i] = data.get(i);
-        }
-
-        return out;
     }
 
     public void writeIntArray(int[] values) {
@@ -115,28 +63,50 @@ public class DataWriter {
         }
     }
 
-    public void writeChat(String value) {
-        writeVarInt(value.length());
-        writeString(value);
+    public void writeFloat(float value) {
+        writeByteArray(ByteBuffer.allocate(4).putFloat(value).array());
     }
 
-    public void writeIdentifier(String identifier) {
-        writeChat(identifier);
+    public void writeDouble(double value) {
+        writeByteArray(ByteBuffer.allocate(8).putDouble(value).array());
     }
 
-    public void writeVarIntArray(int[] values) {
-        for(int value : values)
-            writeVarInt(value);
+    public void writeBoolean(boolean value) {
+        writeByte(value ? 0x01 : 0x00);
     }
 
-    public void writeFloatArray(float[] values) {
-        for(float value : values)
-            writeFloat(value);
+    public void writeVarInt(int value) {
+        do {
+            byte temp = (byte) (value & 0x7f);
+            value >>>= 7;
+
+            if(value != 0) {
+                temp |= 0x80;
+            }
+
+            writeByte(temp);
+        } while (value != 0);
     }
 
-    public void writeVarLongArray(long[] values) {
-        for(long value : values)
-            writeVarLong(value);
+    public void writeVarLong(long value) {
+        do {
+            byte temp = (byte) (value & 0x7f);
+            value >>>= 7;
+
+            if(value != 0) {
+                temp |= 0x80;
+            }
+
+            writeByte(temp);
+        } while (value != 0);
+    }
+
+    public void writeString(String value) {
+        writeByteArray(value.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public void writeAsciiChar(char value) {
+        writeByte(value);
     }
 
     public void writeUUID(UUID uuid) {
@@ -145,6 +115,59 @@ public class DataWriter {
     }
 
     public void writePosition(Position position) {
-        writeLong(((long) (position.getX() & 0x3FFFFFF) << 38) | ((long) (position.getZ() & 0x3FFFFFF) << 12) | (position.getY() & 0xFFF));
+        int protocol = Main.getInstance().getReplayData().getProtocolVersion();
+
+        if(protocol <= 340) {
+            writeLong(((long) (position.getX() & 0x3ffffff) << 38) | ((long) (position.getX() & 0xfff) << 26) | ((long) (position.getZ() & 0x3ffffff)));
+        } else {
+            writeLong(((long) (position.getX() & 0x3ffffff) << 38) | ((long) (position.getZ() & 0x3ffffff) << 12) | (position.getY() & 0xfff));
+        }
+    }
+
+    public void writeSlot(Slot slot) {
+        int protocol = Main.getInstance().getReplayData().getProtocolVersion();
+
+        if(protocol <= 340) {
+            writeShort(slot.getBlockID());
+
+            if(slot.getBlockID() != -1) {
+                writeByte(slot.getItemCount());
+                writeShort(slot.getItemDamage());
+                slot.getNbt().writeNBT(this);
+            }
+        } else {
+            writeBoolean(slot.isPresent());
+
+            if(slot.isPresent()) {
+                writeVarInt(slot.getItemID());
+                writeByte(slot.getItemCount());
+                slot.getNbt().writeNBT(this);
+            }
+        }
+    }
+
+    public byte[] getData() {
+        return outputStream.toByteArray();
+    }
+
+    public OutputStream getStream() {
+        try {
+            outputStream.write(buffer, 0, index);
+            outputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return outputStream;
+    }
+
+    public void closeStream() {
+        try {
+            outputStream.write(buffer, 0, index);
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

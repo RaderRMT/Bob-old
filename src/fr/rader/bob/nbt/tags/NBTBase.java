@@ -1,10 +1,14 @@
 package fr.rader.bob.nbt.tags;
 
+import fr.rader.bob.utils.DataWriter;
+
+import java.io.IOException;
+
 public class NBTBase {
 
     private int length;
     private int id;
-    private String name = null;
+    private String name;
 
     public int getLength() {
         return length;
@@ -30,8 +34,7 @@ public class NBTBase {
         this.name = name;
     }
 
-    public byte[] toByteArray() {
-        return null;
+    public void writeNBT(DataWriter writer) {
     }
 
     public NBTByte getAsNBTByte() {

@@ -3,6 +3,8 @@ package fr.rader.bob.nbt.tags;
 import fr.rader.bob.utils.DataReader;
 import fr.rader.bob.utils.DataWriter;
 
+import java.io.IOException;
+
 public class NBTLong extends NBTBase {
 
     private long value;
@@ -18,8 +20,12 @@ public class NBTLong extends NBTBase {
         this.value = value;
     }
 
-    public NBTLong(byte[] rawData) {
-        this.value = new DataReader(rawData).readLong();
+    public NBTLong(DataReader reader) {
+        try {
+            this.value = reader.readLong();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public long getValue() {
@@ -30,10 +36,7 @@ public class NBTLong extends NBTBase {
         this.value = value;
     }
 
-    @Override
-    public byte[] toByteArray() {
-        DataWriter writer = new DataWriter();
-
+    public void writeNBT(DataWriter writer) {
         if(getName() != null) {
             writer.writeByte(getId());
             writer.writeShort(getName().length());
@@ -41,7 +44,5 @@ public class NBTLong extends NBTBase {
         }
 
         writer.writeLong(value);
-
-        return writer.getData();
     }
 }

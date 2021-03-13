@@ -323,7 +323,7 @@ public class NBTEditor {
 
                 element = new NBTByte(0);
 
-                list.addByte(element);
+                list.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 1), cell, list.getComponents().length - 1);
             } else if(cell.getAssociatedNBT() instanceof NBTCompound) {
                 NBTCompound compound = cell.getAssociatedNBT().getAsCompound();
@@ -332,7 +332,7 @@ public class NBTEditor {
                 if(name == null) return;
                 element = new NBTByte(name, 0);
 
-                compound.addByte(element);
+                compound.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 1), cell, compound.getComponents().length - 1);
             }
 
@@ -358,7 +358,7 @@ public class NBTEditor {
 
                 element = new NBTShort(0);
 
-                list.addShort(element);
+                list.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 2), cell, list.getComponents().length - 1);
             } else if(cell.getAssociatedNBT() instanceof NBTCompound) {
                 NBTCompound compound = cell.getAssociatedNBT().getAsCompound();
@@ -367,7 +367,7 @@ public class NBTEditor {
                 if(name == null) return;
                 element = new NBTShort(name, 0);
 
-                compound.addShort(element);
+                compound.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 2), cell, compound.getComponents().length - 1);
             }
 
@@ -393,7 +393,7 @@ public class NBTEditor {
 
                 element = new NBTInt(0);
 
-                list.addInt(element);
+                list.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 3), cell, list.getComponents().length - 1);
             } else if(cell.getAssociatedNBT() instanceof NBTCompound) {
                 NBTCompound compound = cell.getAssociatedNBT().getAsCompound();
@@ -402,7 +402,7 @@ public class NBTEditor {
                 if(name == null) return;
                 element = new NBTInt(name, 0);
 
-                compound.addInt(element);
+                compound.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 3), cell, compound.getComponents().length - 1);
             }
 
@@ -428,7 +428,7 @@ public class NBTEditor {
 
                 element = new NBTLong(0);
 
-                list.addLong(element);
+                list.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 4), cell, list.getComponents().length - 1);
             } else if(cell.getAssociatedNBT() instanceof NBTCompound) {
                 NBTCompound compound = cell.getAssociatedNBT().getAsCompound();
@@ -437,7 +437,7 @@ public class NBTEditor {
                 if(name == null) return;
                 element = new NBTLong(name, 0);
 
-                compound.addLong(element);
+                compound.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 4), cell, compound.getComponents().length - 1);
             }
 
@@ -463,7 +463,7 @@ public class NBTEditor {
 
                 element = new NBTFloat(0f);
 
-                list.addFloat(element);
+                list.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 5), cell, list.getComponents().length - 1);
             } else if(cell.getAssociatedNBT() instanceof NBTCompound) {
                 NBTCompound compound = cell.getAssociatedNBT().getAsCompound();
@@ -472,7 +472,7 @@ public class NBTEditor {
                 if(name == null) return;
                 element = new NBTFloat(name, 0);
 
-                compound.addFloat(element);
+                compound.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 5), cell, compound.getComponents().length - 1);
             }
 
@@ -498,7 +498,7 @@ public class NBTEditor {
 
                 element = new NBTDouble(0);
 
-                list.addDouble(element);
+                list.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 6), cell, list.getComponents().length - 1);
             } else if(cell.getAssociatedNBT() instanceof NBTCompound) {
                 NBTCompound compound = cell.getAssociatedNBT().getAsCompound();
@@ -507,7 +507,7 @@ public class NBTEditor {
                 if(name == null) return;
                 element = new NBTDouble(name, 0);
 
-                compound.addDouble(element);
+                compound.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 6), cell, compound.getComponents().length - 1);
             }
 
@@ -534,7 +534,7 @@ public class NBTEditor {
                 int length = Integer.parseInt(JOptionPane.showInputDialog(null, null, "Create Tag (array length)", JOptionPane.PLAIN_MESSAGE));
                 element = new NBTByteArray(new byte[length]);
 
-                list.addByteArray(element);
+                list.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 7), cell, list.getComponents().length - 1);
             } else if(cell.getAssociatedNBT() instanceof NBTCompound) {
                 NBTCompound compound = cell.getAssociatedNBT().getAsCompound();
@@ -547,7 +547,7 @@ public class NBTEditor {
                 int length = Integer.parseInt(preLength);
                 element = new NBTByteArray(name, new byte[length]);
 
-                compound.addByteArray(element);
+                compound.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 7), cell, compound.getComponents().length - 1);
             }
 
@@ -574,7 +574,7 @@ public class NBTEditor {
                 int length = Integer.parseInt(JOptionPane.showInputDialog(null, null, "Create Tag (array length)", JOptionPane.PLAIN_MESSAGE));
                 element = new NBTIntArray(new int[length]);
 
-                list.addIntArray(element);
+                list.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 11), cell, list.getComponents().length - 1);
             } else if(cell.getAssociatedNBT() instanceof NBTCompound) {
                 NBTCompound compound = cell.getAssociatedNBT().getAsCompound();
@@ -587,7 +587,7 @@ public class NBTEditor {
                 int length = Integer.parseInt(preLength);
                 element = new NBTIntArray(name, new int[length]);
 
-                compound.addIntArray(element);
+                compound.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 11), cell, compound.getComponents().length - 1);
             }
 
@@ -614,7 +614,7 @@ public class NBTEditor {
                 int length = Integer.parseInt(JOptionPane.showInputDialog(null, null, "Create Tag (array length)", JOptionPane.PLAIN_MESSAGE));
                 element = new NBTLongArray(new long[length]);
 
-                list.addLongArray(element);
+                list.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 12), cell, list.getComponents().length - 1);
             } else if(cell.getAssociatedNBT() instanceof NBTCompound) {
                 NBTCompound compound = cell.getAssociatedNBT().getAsCompound();
@@ -627,7 +627,7 @@ public class NBTEditor {
                 int length = Integer.parseInt(preLength);
                 element = new NBTLongArray(name, new long[length]);
 
-                compound.addLongArray(element);
+                compound.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 12), cell, compound.getComponents().length - 1);
             }
 
@@ -655,7 +655,7 @@ public class NBTEditor {
                 if(name == null) return;
                 element = new NBTString(name);
 
-                list.addString(element);
+                list.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 8), cell, list.getComponents().length - 1);
             } else if(cell.getAssociatedNBT() instanceof NBTCompound) {
                 NBTCompound compound = cell.getAssociatedNBT().getAsCompound();
@@ -664,7 +664,7 @@ public class NBTEditor {
                 if(name == null) return;
                 element = new NBTString(name, "");
 
-                compound.addString(element);
+                compound.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 8), cell, compound.getComponents().length - 1);
             }
 
@@ -699,7 +699,7 @@ public class NBTEditor {
                 if(name == null) return;
                 element = new NBTList(name, -1);
 
-                compound.addList(element);
+                compound.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 9), cell, compound.getComponents().length - 1);
             }
 
@@ -734,7 +734,7 @@ public class NBTEditor {
                 if(name == null) return;
                 element = new NBTCompound(name);
 
-                compound.addCompound(element);
+                compound.addComponent(element);
                 model.insertNodeInto(new NBTCell(element, 10), cell, compound.getComponents().length - 1);
             }
 

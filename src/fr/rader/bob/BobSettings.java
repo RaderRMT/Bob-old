@@ -2,11 +2,10 @@ package fr.rader.bob;
 
 import fr.rader.bob.nbt.tags.NBTBase;
 import fr.rader.bob.nbt.tags.NBTCompound;
-import fr.rader.bob.utils.DataReader;
-import fr.rader.bob.utils.IO;
-import fr.rader.bob.utils.OS;
+import fr.rader.bob.utils.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +18,7 @@ public class BobSettings {
 
     public BobSettings() {
         this.settingsFile = new File(OS.getBobFolder() + "settings.nbt");
-        
+
         try {
             if(settingsFile.isDirectory()) settingsFile.delete();
             if(!settingsFile.exists()) {
@@ -32,7 +31,6 @@ public class BobSettings {
             e.printStackTrace();
         }
 
-        // read settings from config file
         try {
             NBTCompound nbt = new DataReader(Files.readAllBytes(settingsFile.toPath())).readNBT();
 
@@ -42,6 +40,17 @@ public class BobSettings {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void createConfig() {
+        NBTCompound settings = new NBTCompound("")
+                .addString("workingDirectory", OS.getBobFolder().replace("\\", "/"))
+                .addString("lastProject", "");
+
+        DataWriter writer = new DataWriter();
+        settings.writeNBT(writer);
+
+        IO.writeFile(settingsFile, StreamConverter.toInputStream(writer.getStream()));
     }
 
     public static String getWorkingDirectory() {
@@ -61,8 +70,6 @@ public class BobSettings {
         saveSettings();
     }
 
-
-
     public String getProperty(String key) {
         return settings.get(key);
     }
@@ -78,14 +85,9 @@ public class BobSettings {
             nbt.addString(value.getKey(), value.getValue());
         }
 
-        IO.writeBinaryFile(settingsFile, nbt.toByteArray());
-    }
+        DataWriter writer = new DataWriter();
+        nbt.writeNBT(writer);
 
-    private void createConfig() {
-        NBTCompound settings = new NBTCompound("")
-                .addString("workingDirectory", OS.getBobFolder().replace("\\", "/"))
-                .addString("lastProject", "");
-
-        IO.writeBinaryFile(settingsFile, settings.toByteArray());
+        IO.writeFile(settingsFile, StreamConverter.toInputStream(writer.getStream()));
     }
 }

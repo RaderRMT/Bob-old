@@ -1,14 +1,13 @@
 package fr.rader.bob;
 
 import com.google.gson.Gson;
+import fr.rader.bob.utils.DataReader;
 import fr.rader.bob.utils.IO;
 import fr.rader.bob.utils.OS;
-import net.lingala.zip4j.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
+import fr.rader.bob.utils.ReplayZip;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -19,9 +18,11 @@ public class ReplayData {
     private Map<String, Object> metaData = new HashMap<>();
 
     private final File project;
-    private File replay;
+    private File mcprFile;
 
     private boolean alreadyHasReplay = false;
+
+    private ReplayZip replayZip;
 
     public ReplayData(File project) {
         this.project = project;
@@ -29,64 +30,58 @@ public class ReplayData {
         for(File file : project.listFiles()) {
             if(file.getName().endsWith(".mcpr")) {
                 alreadyHasReplay = true;
-                this.replay = file;
-                break;
+                mcprFile = file;
             }
         }
 
         if(!alreadyHasReplay) {
-            this.replay = IO.openFilePrompt("Replay File", OS.getMinecraftFolder() + "replay_recordings/", "mcpr");
+            mcprFile = IO.openFilePrompt("Replay File", OS.getMinecraftFolder() + "replay_recordings/", "mcpr");
         }
 
-        if(replay == null) {
+        if(mcprFile == null) {
             System.out.println("No Replay selected, stopping.");
             System.exit(0);
         }
 
-        if(!alreadyHasReplay) extractFiles();
+        File oldMcprFile = new File(project.getAbsolutePath() + "/" + this.mcprFile.getName());
+        if(!alreadyHasReplay) {
+            try {
+                Files.copy(this.mcprFile.toPath(), oldMcprFile.toPath());
+            } catch (Exception ignored) {}
+
+            mcprFile = oldMcprFile;
+        }
+
+        replayZip = new ReplayZip(mcprFile);
         readMetaData();
         checkBadlion();
     }
 
-    public File getProject() {
-        return this.project;
-    }
-
-    public File getReplay() {
-        return this.replay;
-    }
-
-    public File getRecording() {
-        return new File(project.getAbsolutePath() + "/files/recording.tmcpr");
-    }
-
-    public Object getMetaData(String key) {
-        return metaData.get(key);
-    }
-
-    public int getProtocolVersion() {
-        return (int) ((double) metaData.get("protocol"));
-    }
-
-    private void extractFiles() {
-        if(!alreadyHasReplay) {
-            try {
-                Files.copy(this.replay.toPath(), new File(project.getAbsolutePath() + "/" + this.replay.getName()).toPath());
-            } catch (Exception ignored) {}
-        }
-
+    private void readMetaData() {
         try {
-            ZipFile mcprFile = new ZipFile(this.replay);
-            mcprFile.extractAll(project.getAbsolutePath() + "/files/");
-        } catch (ZipException e) {
+            DataReader reader = new DataReader(replayZip.getEntry("metaData.json"));
+
+            String readerMetaData = null;
+            try {
+                readerMetaData = reader.readString(reader.getLength());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            reader.close();
+
+            if(readerMetaData == null) return;
+            metaData = new Gson().fromJson(readerMetaData, Map.class);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void checkBadlion() {
-        if(new File(project.getAbsolutePath() + "/files/badlion.json").exists()) stopBob();
-        if(!new File(project.getAbsolutePath() + "/files/mods.json").exists()) stopBob();
-        if(!new File(project.getAbsolutePath() + "/files/recording.tmcpr.crc32").exists()) stopBob();
+        if(replayZip.hasEntry("badlion.json")) stopBob();
+        if(!replayZip.hasEntry("mods.json")) stopBob();
+        if(!replayZip.hasEntry("recording.tmcpr.crc32")) stopBob();
+
         if(!metaData.containsKey("serverName")) stopBob();
         if(!((String) metaData.get("generator")).startsWith("ReplayMod")) stopBob();
     }
@@ -104,26 +99,19 @@ public class ReplayData {
         System.exit(0);
     }
 
-    private void readMetaData() {
-        try {
-            FileReader fileReader = new FileReader(project.getAbsolutePath() + "/files/metaData.json");
-            metaData = new Gson().fromJson(fileReader, Map.class);
-            fileReader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public File getProject() {
+        return project;
     }
 
-    public void exportReplay(String output) {
-        try {
-            ZipFile mcpr = new ZipFile(output);
+    public File getMcprFile() {
+        return mcprFile;
+    }
 
-            mcpr.addFile(project.getAbsolutePath() + "/files/recording.tmcpr");
-            mcpr.addFile(project.getAbsolutePath() + "/files/recording.tmcpr.crc32");
-            mcpr.addFile(project.getAbsolutePath() + "/files/mods.json");
-            mcpr.addFile(project.getAbsolutePath() + "/files/metaData.json");
-        } catch (ZipException e) {
-            e.printStackTrace();
-        }
+    public Object getMetaData(String key) {
+        return metaData.get(key);
+    }
+
+    public int getProtocolVersion() {
+        return (int) ((double) metaData.get("protocol"));
     }
 }

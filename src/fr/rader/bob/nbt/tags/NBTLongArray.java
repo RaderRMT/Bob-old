@@ -2,12 +2,14 @@ package fr.rader.bob.nbt.tags;
 
 import fr.rader.bob.utils.DataWriter;
 
+import java.io.IOException;
+
 public class NBTLongArray extends NBTBase {
 
     private long[] value;
 
     public NBTLongArray(String name, long[] value) {
-        setId(0x0c);
+        setId(0x0b);
         setName(name);
 
         this.value = value;
@@ -25,10 +27,7 @@ public class NBTLongArray extends NBTBase {
         this.value = value;
     }
 
-    @Override
-    public byte[] toByteArray() {
-        DataWriter writer = new DataWriter();
-
+    public void writeNBT(DataWriter writer) {
         if(getName() != null) {
             writer.writeByte(getId());
             writer.writeShort(getName().length());
@@ -37,7 +36,5 @@ public class NBTLongArray extends NBTBase {
 
         writer.writeInt(value.length);
         writer.writeLongArray(value);
-
-        return writer.getData();
     }
 }
