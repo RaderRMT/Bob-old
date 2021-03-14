@@ -349,4 +349,12 @@ public class DataReader {
 
         return 0;
     }
+
+    public void skip(int i) {
+        try {
+            inputStream.skip(i);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

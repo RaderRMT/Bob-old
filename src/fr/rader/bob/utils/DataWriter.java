@@ -11,18 +11,22 @@ import java.util.UUID;
 
 public class DataWriter {
 
-    private ByteArrayOutputStream outputStream;
+    private ByteArrayInOutStream stream;
 
     private byte[] buffer = new byte[16384];
     private int index = 0;
 
     public DataWriter() {
-        outputStream = new ByteArrayOutputStream();
+        stream = new ByteArrayInOutStream();
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public void writeByte(int value) {
         if(index == buffer.length) {
-            outputStream.write(buffer, 0, index);
+            stream.write(buffer, 0, index);
             index = 0;
         }
 
@@ -147,25 +151,38 @@ public class DataWriter {
     }
 
     public byte[] getData() {
-        return outputStream.toByteArray();
+        return stream.toByteArray();
     }
 
-    public OutputStream getStream() {
+    public InputStream getInputStream() {
         try {
-            outputStream.write(buffer, 0, index);
-            outputStream.flush();
+            stream.write(buffer, 0, index);
+            stream.flush();
+            index = 0;
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return outputStream;
+        return stream.getInputStream();
+    }
+
+    public OutputStream getStream() {
+        try {
+            stream.write(buffer, 0, index);
+            stream.flush();
+            index = 0;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return stream;
     }
 
     public void closeStream() {
         try {
-            outputStream.write(buffer, 0, index);
-            outputStream.flush();
-            outputStream.close();
+            stream.write(buffer, 0, index);
+            stream.flush();
+            stream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

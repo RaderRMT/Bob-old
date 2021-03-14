@@ -44,6 +44,8 @@ public class ReplayZip {
 
     public void open() {
         try {
+            zipFile.close();
+
             this.tempFile = File.createTempFile(file.getName(), null);
             tempFile.delete();
             file.renameTo(tempFile);
@@ -118,6 +120,8 @@ public class ReplayZip {
             outputStream.close();
             zipFile.close();
             tempFile.delete();
+
+            zipFile = new ZipFile(file);
         } catch (IOException e) {
             e.printStackTrace();
         }

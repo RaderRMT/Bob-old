@@ -52,8 +52,6 @@ public class PacketReader {
         this.packetID = packetID;
 
         properties = readProperties();
-
-        System.out.println(properties);
     }
 
     public ArrayList<PacketBase> deserializePacket(Packet packet) {
@@ -196,9 +194,15 @@ public class PacketReader {
 
         serializeArray(packetData, writer);
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        DataReader reader = new DataReader(writer.getInputStream());
 
-        return new Packet(writer.getData(), packetID);
+        try {
+            return new Packet(reader.readFollowingBytes(reader.getLength()), packetID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     private void serializeArray(ArrayList<PacketBase> packetData, DataWriter writer) {
@@ -245,6 +249,9 @@ public class PacketReader {
             case "slot": writer.writeSlot((Slot) object); break;
             // todo:
             //  metadata
+            default:
+                System.out.println("writeValue: unknown type \"" + type + "\"");
+                break;
         }
     }
 

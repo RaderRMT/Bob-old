@@ -7,7 +7,6 @@ import fr.rader.bob.nbt.tags.NBTString;
 import fr.rader.bob.utils.DataReader;
 import fr.rader.bob.utils.DataWriter;
 import fr.rader.bob.utils.IO;
-import fr.rader.bob.utils.StreamConverter;
 
 import javax.swing.*;
 import java.io.File;
@@ -48,7 +47,7 @@ public class Projects {
         DataWriter writer = new DataWriter();
         tag.writeNBT(writer);
 
-        IO.writeFile(projectsFile, StreamConverter.toInputStream(writer.getStream()));
+        IO.writeFile(projectsFile, writer.getInputStream());
     }
 
     private void readProjects() {

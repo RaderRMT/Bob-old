@@ -6,17 +6,8 @@ import java.io.IOException;
 
 public class NBTBase {
 
-    private int length;
     private int id;
     private String name;
-
-    public int getLength() {
-        return length;
-    }
-
-    public void setLength(int length) {
-        this.length = length;
-    }
 
     public int getId() {
         return id;

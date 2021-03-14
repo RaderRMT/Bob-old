@@ -17,16 +17,14 @@ public class ReplayData {
 
     private Map<String, Object> metaData = new HashMap<>();
 
-    private final File project;
-    private File mcprFile;
-
-    private boolean alreadyHasReplay = false;
-
     private ReplayZip replayZip;
+    private File mcprFile;
+    private File project;
 
     public ReplayData(File project) {
         this.project = project;
 
+        boolean alreadyHasReplay = false;
         for(File file : project.listFiles()) {
             if(file.getName().endsWith(".mcpr")) {
                 alreadyHasReplay = true;
@@ -113,5 +111,9 @@ public class ReplayData {
 
     public int getProtocolVersion() {
         return (int) ((double) metaData.get("protocol"));
+    }
+
+    public ReplayZip getReplayZip() {
+        return replayZip;
     }
 }

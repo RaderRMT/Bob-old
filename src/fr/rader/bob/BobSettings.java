@@ -50,7 +50,7 @@ public class BobSettings {
         DataWriter writer = new DataWriter();
         settings.writeNBT(writer);
 
-        IO.writeFile(settingsFile, StreamConverter.toInputStream(writer.getStream()));
+        IO.writeFile(settingsFile, writer.getInputStream());
     }
 
     public static String getWorkingDirectory() {
@@ -88,6 +88,6 @@ public class BobSettings {
         DataWriter writer = new DataWriter();
         nbt.writeNBT(writer);
 
-        IO.writeFile(settingsFile, StreamConverter.toInputStream(writer.getStream()));
+        IO.writeFile(settingsFile, writer.getInputStream());
     }
 }

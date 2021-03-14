@@ -9,7 +9,6 @@ import fr.rader.bob.guis.editor.PacketCell;
 import fr.rader.bob.nbt.tags.NBTCompound;
 import fr.rader.bob.packet.Packet;
 import fr.rader.bob.packet.reader.PacketReader;
-import fr.rader.bob.utils.StreamConverter;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -59,7 +58,7 @@ public class MainInterface {
             DataWriter writer = new DataWriter();
             nbt.writeNBT(writer);
 
-            IO.writeFile(preferences, StreamConverter.toInputStream(writer.getStream()));
+            IO.writeFile(preferences, writer.getInputStream());
         } else {
             nbt = IO.readNBTFile(preferences);
         }
@@ -149,7 +148,7 @@ public class MainInterface {
         DataWriter writer = new DataWriter();
         nbt.writeNBT(writer);
 
-        IO.writeFile(preferences, StreamConverter.toInputStream(writer.getStream()));
+        IO.writeFile(preferences, writer.getInputStream());
     }
 
     private JMenuBar addMenuBar() {
