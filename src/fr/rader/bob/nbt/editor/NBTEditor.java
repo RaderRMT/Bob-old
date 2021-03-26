@@ -793,7 +793,7 @@ public class NBTEditor {
         button.setToolTipText(tooltip);
 
         try {
-            URL image = new File(OS.getBobFolder() + "resources/assets/nbt_editor_images/" + icon + ".png").toURI().toURL();
+            URL image = new File(OS.getBobFolder() + "resources/assets/editor_images/" + icon + ".png").toURI().toURL();
             button.setIcon(new ImageIcon(image, tooltip));
         } catch (MalformedURLException e) {
             button.setText(tooltip);
@@ -831,7 +831,7 @@ class NBTCellRenderer extends DefaultTreeCellRenderer {
             NBTCell cell = (NBTCell) value;
 
             try {
-                URL imageUrl = new File(OS.getBobFolder() + "resources/assets/nbt_editor_images/" + cell.getIconName() + ".png").toURI().toURL();
+                URL imageUrl = new File(OS.getBobFolder() + "resources/assets/editor_images/" + cell.getIconName() + ".png").toURI().toURL();
                 setIcon(new ImageIcon(imageUrl));
             } catch (MalformedURLException e) {
                 e.printStackTrace();

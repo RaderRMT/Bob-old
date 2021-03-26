@@ -44,10 +44,7 @@ public class Projects {
             tag.getComponent("projects").getAsList().addString(name);
         }
 
-        DataWriter writer = new DataWriter();
-        tag.writeNBT(writer);
-
-        IO.writeFile(projectsFile, writer.getInputStream());
+        IO.writeNBTFile(projectsFile, tag);
     }
 
     private void readProjects() {

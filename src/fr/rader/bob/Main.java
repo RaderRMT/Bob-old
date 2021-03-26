@@ -2,19 +2,11 @@ package fr.rader.bob;
 
 import fr.rader.bob.guis.MainInterface;
 import fr.rader.bob.guis.ProjectSelector;
-import fr.rader.bob.nbt.editor.NBTEditor;
-import fr.rader.bob.nbt.tags.NBTCompound;
-import fr.rader.bob.packet.Packet;
-import fr.rader.bob.packet.reader.PacketBase;
-import fr.rader.bob.packet.reader.PacketReader;
-import fr.rader.bob.utils.DataReader;
-import fr.rader.bob.utils.DataWriter;
+import fr.rader.bob.utils.IO;
 import fr.rader.bob.utils.OS;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 
 public class Main {
 
@@ -53,10 +45,10 @@ public class Main {
         File project = new File(BobSettings.getWorkingDirectory() + "/projects/" + projectName);
 
         replayData = new ReplayData(project);
-        //MainInterface mainInterface = new MainInterface();
-        //mainInterface.createWindow();
+        MainInterface mainInterface = new MainInterface();
+        mainInterface.createWindow();
 
-        try {
+        /*try {
             DataReader reader = new DataReader(replayData.getReplayZip().getEntry("recording.tmcpr"));
             DataWriter writer = new DataWriter();
 
@@ -96,7 +88,7 @@ public class Main {
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public static void main(String[] args) {
@@ -112,9 +104,20 @@ public class Main {
             e.printStackTrace();
         }
 
+        verifyRequiredFiles();
+
         System.setProperty("org.lwjgl.librarypath", OS.getBobFolder() + "resources/natives/" + OS.getOS());
 
         start();
+    }
+
+    private void verifyRequiredFiles() {
+        if(!new File(OS.getBobFolder() + "resources/").exists()) {
+            File file = IO.openFilePrompt("Resources ZIP", null, "zip");
+            if(file == null) System.exit(-1);
+
+            IO.unzip(file, OS.getBobFolder() + "resources/");
+        }
     }
 
     public BobSettings getSettings() {

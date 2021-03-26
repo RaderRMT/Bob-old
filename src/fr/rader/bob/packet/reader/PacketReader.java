@@ -84,7 +84,9 @@ public class PacketReader {
                 PacketArray array = new PacketArray(arrayBase);
                 if(array.getType() == null) {
                     for(int i = 0; i < (int) getGlobalValue(globalVariables, array.getBoundVariable()); i++) {
-                        array.add(deserializePacketData(arrayBase.getData(), reader));
+                        PacketArray inArray = new PacketArray(Integer.toString(i), null, null);
+                        inArray.add(deserializePacketData(arrayBase.getData(), reader));
+                        array.add(inArray);
                     }
                 } else {
                     for(int i = 0; i < (int) getGlobalValue(globalVariables, array.getBoundVariable()); i++) {

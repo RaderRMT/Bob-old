@@ -17,7 +17,7 @@ public class DataWriter {
     private int index = 0;
 
     public DataWriter() {
-        stream = new ByteArrayInOutStream();
+        stream = new ByteArrayInOutStream(1);
     }
 
     public int getIndex() {
@@ -151,38 +151,38 @@ public class DataWriter {
     }
 
     public byte[] getData() {
-        return stream.toByteArray();
+        flush();
+
+        return stream.getBufferData();
     }
 
     public InputStream getInputStream() {
-        try {
-            stream.write(buffer, 0, index);
-            stream.flush();
-            index = 0;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        flush();
 
         return stream.getInputStream();
     }
 
     public OutputStream getStream() {
-        try {
-            stream.write(buffer, 0, index);
-            stream.flush();
-            index = 0;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        flush();
 
         return stream;
     }
 
     public void closeStream() {
+        flush();
+
+        try {
+            stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void flush() {
         try {
             stream.write(buffer, 0, index);
             stream.flush();
-            stream.close();
+            index = 0;
         } catch (IOException e) {
             e.printStackTrace();
         }

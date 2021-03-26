@@ -9,12 +9,10 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.UUID;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 public class DataReader {
 
-    private ZipFile zipFile;
+    private ReplayZip zipFile;
     private InputStream inputStream;
 
     /**
@@ -25,12 +23,8 @@ public class DataReader {
     public DataReader(File zip, String entry) {
         if(zip == null || entry == null) throw new IllegalArgumentException("arguments must not be null");
 
-        try {
-            zipFile = new ZipFile(zip);
-            inputStream = zipFile.getInputStream(new ZipEntry(entry));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        zipFile = new ReplayZip(zip);
+        inputStream = zipFile.getEntry(entry);
     }
 
     public DataReader(InputStream inputStream) {
@@ -54,6 +48,8 @@ public class DataReader {
     }
 
     public DataReader(byte[] data) {
+        if(data == null) throw new IllegalArgumentException("data must not be null");
+
         inputStream = new ByteArrayInputStream(data);
     }
 

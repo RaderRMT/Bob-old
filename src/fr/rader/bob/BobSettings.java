@@ -4,6 +4,7 @@ import fr.rader.bob.nbt.tags.NBTBase;
 import fr.rader.bob.nbt.tags.NBTCompound;
 import fr.rader.bob.utils.*;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,10 +48,7 @@ public class BobSettings {
                 .addString("workingDirectory", OS.getBobFolder().replace("\\", "/"))
                 .addString("lastProject", "");
 
-        DataWriter writer = new DataWriter();
-        settings.writeNBT(writer);
-
-        IO.writeFile(settingsFile, writer.getInputStream());
+        IO.writeNBTFile(settingsFile, settings);
     }
 
     public static String getWorkingDirectory() {
@@ -63,11 +61,14 @@ public class BobSettings {
 
         if(!newDir.exists()) newDir.mkdirs();
 
-        IO.move(oldDir, newDir.getParentFile());
-        IO.deleteDirectory(oldDir);
+        if(IO.move(oldDir, newDir.getParentFile())) {
+            IO.deleteDirectory(oldDir);
 
-        setProperty("workingDirectory", newDirectory);
-        saveSettings();
+            setProperty("workingDirectory", newDirectory);
+            saveSettings();
+        } else {
+            JOptionPane.showMessageDialog(null, "Could not move the projects folder!", "Error while moving the projects folder", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public String getProperty(String key) {
@@ -85,9 +86,6 @@ public class BobSettings {
             nbt.addString(value.getKey(), value.getValue());
         }
 
-        DataWriter writer = new DataWriter();
-        nbt.writeNBT(writer);
-
-        IO.writeFile(settingsFile, writer.getInputStream());
+        IO.writeNBTFile(settingsFile, nbt);
     }
 }

@@ -1,5 +1,6 @@
 package fr.rader.bob.guis;
 
+import fr.rader.bob.packet.reader.*;
 import fr.rader.bob.utils.DataWriter;
 import fr.rader.bob.utils.IO;
 import fr.rader.bob.Main;
@@ -8,7 +9,6 @@ import fr.rader.bob.engine.Engine;
 import fr.rader.bob.guis.editor.PacketCell;
 import fr.rader.bob.nbt.tags.NBTCompound;
 import fr.rader.bob.packet.Packet;
-import fr.rader.bob.packet.reader.PacketReader;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -19,8 +19,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 public class MainInterface {
 
@@ -55,10 +54,7 @@ public class MainInterface {
                     .addInt("hsdl", 930)
                     .addInt("vsdl", 530);
 
-            DataWriter writer = new DataWriter();
-            nbt.writeNBT(writer);
-
-            IO.writeFile(preferences, writer.getInputStream());
+            IO.writeNBTFile(preferences, nbt);
         } else {
             nbt = IO.readNBTFile(preferences);
         }
@@ -84,25 +80,29 @@ public class MainInterface {
         horizontalSplit.setLeftComponent(engineCanvas);
     }
 
-    public void showPacketData(Packet packet, PacketReader packetReader) {
-        setPacketReader(packetReader);
-
+    public void showPacketData(Packet packet) {
         root.removeAllChildren();
 
-        //treeModel.setRoot(buildTree(packetReader.readPacket(packet), "Packet"));
+        System.out.println(packetReader.deserializePacket(packet));
+
+        treeModel.setRoot(buildTree(packetReader.deserializePacket(packet), "Packet 0x" + Integer.toHexString(packet.getPacketID())));
 
         treeModel.reload();
     }
 
-    private PacketCell buildTree(LinkedHashMap<String, Object> packetData, String cellName) {
+    private PacketCell buildTree(ArrayList<PacketBase> packetData, String cellName) {
         PacketCell currentCell = new PacketCell(cellName);
         currentCell.setAllowsChildren(true);
 
-        for(Map.Entry<String, Object> entry : packetData.entrySet()) {
-            if(entry.getValue() instanceof LinkedHashMap) {
-                currentCell.add(buildTree((LinkedHashMap<String, Object>) entry.getValue(), entry.getKey()));
+        for(PacketBase base : packetData) {
+            if(base instanceof PacketMatch) {
+                currentCell.add(buildTree(((PacketMatch) base).getData(), base.getName()));
+            } else if(base instanceof PacketArray) {
+                currentCell.add(buildTree(((PacketArray) base).getData(), base.getName()));
+            } else if(base instanceof PacketCondition) {
+                currentCell.add(buildTree(((PacketCondition) base).getData(), base.getName()));
             } else {
-                PacketCell cell = new PacketCell(entry.getKey());
+                PacketCell cell = new PacketCell(base.getName() + ": " + base.getAsPacketVariable().getValue());
                 cell.setAllowsChildren(false);
                 currentCell.add(cell);
             }
@@ -145,10 +145,7 @@ public class MainInterface {
         nbt.getComponent("hsdl").getAsNBTInt().setValue(horizontalSplit.getDividerLocation());
         nbt.getComponent("vsdl").getAsNBTInt().setValue(verticalSplit.getDividerLocation());
 
-        DataWriter writer = new DataWriter();
-        nbt.writeNBT(writer);
-
-        IO.writeFile(preferences, writer.getInputStream());
+        IO.writeNBTFile(preferences, nbt);
     }
 
     private JMenuBar addMenuBar() {
@@ -222,6 +219,7 @@ class MenuBarListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Main main = Main.getInstance();
+        MainInterface mainInterface = MainInterface.getInstance();
 
         switch(((JMenuItem) e.getSource()).getText()) {
 //            case "Close Project":
@@ -245,20 +243,26 @@ class MenuBarListener implements ActionListener {
                 }
                 break;
             case "test":
-                /*DataWriter writer = new DataWriter();
-                writer.writeVarInt(2);
+                DataWriter writer = new DataWriter();
+                writer.writeInt(2); // test
+                // test array (length of test)
+                writer.writeByte(1); // 0
+                writer.writeByte(2); // 1
+                // test normal array
+                writer.writeByte(3); // 0
+                writer.writeByte(4); // 1
+                writer.writeByte(5); // 0
+                writer.writeByte(6); // 1
+                // match test (there's nothing)
+                // if test < 5
+                writer.writeByte(5);// if byte
 
-                writer.writeVarInt(1);
-                writer.writeVarInt(2);
-                writer.writeVarInt(3);
-                writer.writeVarInt(4);
-                writer.writeVarInt(5);
-                writer.writeVarInt(6);
+                Packet packet = new Packet(writer.getData(), 0x70);
+                writer.closeStream();
 
-                Packet packet = new Packet(writer.getData(), 0x06);
-                PacketReader packetReader = new PacketReader(packet.getPacketID());
-
-                MainInterface.getInstance().showPacketData(packet, packetReader);*/
+                PacketReader packetReader = new PacketReader(0x70);
+                mainInterface.setPacketReader(packetReader);
+                mainInterface.showPacketData(packet);
                 break;
         }
     }

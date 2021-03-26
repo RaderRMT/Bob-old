@@ -13,6 +13,10 @@ public class ByteArrayInOutStream extends ByteArrayOutputStream {
         super(size);
     }
 
+    public byte[] getBufferData() {
+        return this.buf;
+    }
+
     public ByteArrayInputStream getInputStream() {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(this.buf, 0, this.count);
 
