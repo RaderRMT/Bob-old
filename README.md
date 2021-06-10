@@ -10,7 +10,7 @@ There are currently no useful GUIs, as it's a pain to make and I have other thin
 # WARNING:
 ```diff
 - Bob is very experimental.
-- Do not blame me for any broken Replays (that's why Bob make backups), but follow next point instead.
+- Do not blame me for any broken Replays (that's why Bob makes backups), but follow next point instead.
 - If you have any issues with Bob, report it in the issues tab ONLY IF IT HASN'T BEEN REPORTED ALREADY.
 ```
 
